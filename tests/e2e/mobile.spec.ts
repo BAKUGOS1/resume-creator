@@ -27,8 +27,11 @@ test('mobile: create, edit and read the reflowed web résumé without horizontal
 
 test('mobile: landing page is readable and leads into the builder', async ({ page, errors: _errors }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('résumé builder');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('people and parsers');
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
-  await page.getByRole('link', { name: /Build my résumé/ }).click();
+  await page
+    .getByRole('link', { name: /Build my résumé/ })
+    .first()
+    .click();
   await expect(page).toHaveURL(/\/resumes$/);
 });

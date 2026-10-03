@@ -28,7 +28,7 @@ export const paths = {
 };
 
 export function navigate(to: string, opts: { replace?: boolean } = {}) {
-  if (to === window.location.pathname) return;
+  if (to === window.location.pathname + window.location.search) return;
   if (opts.replace) window.history.replaceState(null, '', to);
   else window.history.pushState(null, '', to);
   window.scrollTo(0, 0);

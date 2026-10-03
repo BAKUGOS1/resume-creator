@@ -1,7 +1,8 @@
 /**
  * Zero-dependency production server for the built app (dist/).
  * - Serves only files inside dist/ (no traversal, no dotfiles, GET/HEAD only)
- * - Landing page at /, React app (app.html) at /resumes and /resume/:id, 404.html otherwise
+ * - Static site pages (dir/index.html, trailing-slash URLs), React app (app.html) at
+ *   /resumes and /resume/:id, 404.html otherwise
  * - Same security headers as vercel.json
  * Usage: npm run build && npm start   (PORT=4173 by default)
  */
@@ -73,7 +74,14 @@ const server = createServer(async (req, res) => {
   try {
     const info = await stat(file).catch(() => null);
     if (info?.isFile()) return await serveFile(req, res, file);
-    if (info?.isDirectory() && pathname === '/') return await serveFile(req, res, join(ROOT, 'index.html'));
+    if (info?.isDirectory()) {
+      const index = join(file, 'index.html');
+      const hasIndex = await stat(index)
+        .then((i) => i.isFile())
+        .catch(() => false);
+      if (hasIndex && !pathname.endsWith('/')) return send(res, 308, '', { Location: `${pathname}/` });
+      if (hasIndex) return await serveFile(req, res, index);
+    }
     // App routes are served by the SPA shell; "/" by the static landing page (index.html above).
     if (/^\/(resumes\/?|resume\/[^/]+\/?)$/.test(pathname)) return await serveFile(req, res, join(ROOT, 'app.html'));
     return await serveFile(req, res, join(ROOT, '404.html'), 404);

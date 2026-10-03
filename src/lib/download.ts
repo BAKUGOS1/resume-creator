@@ -15,7 +15,7 @@ export function downloadBlob(blob: Blob, filename: string) {
 export function fileSlug(text: string, fallback = 'Resume'): string {
   const slug = text
     .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^A-Za-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
     .slice(0, 60);

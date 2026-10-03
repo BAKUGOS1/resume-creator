@@ -8,7 +8,7 @@ import { Menu } from '../../components/ui/Menu';
 import { Logo } from '../../components/ui/misc';
 import { createBlankResume } from '../../domain/defaults';
 import { createSampleResume } from '../../domain/sample';
-import type { Resume } from '../../domain/schema';
+import { TEMPLATE_IDS, type Resume, type TemplateId } from '../../domain/schema';
 import { useStore } from '../../lib/store';
 import { addResume, deleteResume, renameResume, useResumeList } from '../../store/resumes';
 import { setTheme, toast, uiStore } from '../../store/ui';
@@ -90,6 +90,16 @@ export function DashboardPage() {
 
   useEffect(() => {
     document.title = 'Your résumés · Resume Creator';
+  }, []);
+
+  // "/resumes?template=timeline" (from the template pages) starts an example in that design.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('template');
+    if (!id) return;
+    navigate(paths.dashboard(), { replace: true }); // consume the param first (StrictMode runs effects twice)
+    if (!(TEMPLATE_IDS as readonly string[]).includes(id)) return;
+    const added = addResume({ ...createSampleResume(), title: 'Untitled résumé', templateId: id as TemplateId });
+    navigate(paths.editor(added.id), { replace: true });
   }, []);
 
   return (
@@ -182,6 +192,9 @@ export function DashboardPage() {
             <ShieldCheckIcon size={15} className="text-success" />
             Private by design: your data is stored only in this browser and never uploaded.
           </p>
+          <a href="/blog/" className="hover:text-fg hover:underline">
+            Résumé writing guides
+          </a>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"

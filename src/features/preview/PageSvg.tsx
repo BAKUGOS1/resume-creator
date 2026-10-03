@@ -50,7 +50,7 @@ export const PageSvg = memo(function PageSvg({ page, width = '100%', label, inte
           case 'link':
             return interactiveLinks ? (
               <a key={i} href={op.url} target="_blank" rel="noopener noreferrer" aria-label={op.url.replace(/^mailto:/, 'Email ').replace(/^tel:/, 'Call ')}>
-                <rect x={op.x} y={op.y} width={op.w} height={op.h} fill="transparent" className="hover:fill-[rgb(217_98_43/0.12)]" />
+                <rect x={op.x} y={op.y} width={op.w} height={op.h} fill="transparent" className="hover:fill-[rgb(255_224_102/0.45)]" />
               </a>
             ) : null;
         }

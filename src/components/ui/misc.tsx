@@ -30,11 +30,12 @@ export function Logo({ className }: { className?: string }) {
   return (
     <span className={cn('inline-flex items-center gap-2 font-semibold tracking-tight', className)}>
       <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="3" y="2" width="18" height="20" rx="3" fill="var(--brand)" />
-        <rect x="6.5" y="6" width="7" height="2" rx="1" fill="var(--brand-fg)" />
-        <rect x="6.5" y="10.5" width="11" height="1.6" rx=".8" fill="var(--brand-fg)" opacity=".75" />
-        <rect x="6.5" y="14" width="11" height="1.6" rx=".8" fill="var(--brand-fg)" opacity=".75" />
-        <rect x="6.5" y="17.5" width="7" height="1.6" rx=".8" fill="var(--brand-fg)" opacity=".75" />
+        <rect x="3.5" y="1.5" width="17" height="21" rx="2.5" fill="#2340b8" />
+        <rect x="6.5" y="5.2" width="7.5" height="1.9" rx=".95" fill="#fff" />
+        <rect x="5.6" y="9.3" width="12.8" height="3.4" rx="1" fill="#ffd84d" />
+        <rect x="6.5" y="10.1" width="11" height="1.6" rx=".8" fill="#1a2a6b" />
+        <rect x="6.5" y="14.6" width="11" height="1.6" rx=".8" fill="#fff" opacity=".8" />
+        <rect x="6.5" y="18" width="7.5" height="1.6" rx=".8" fill="#fff" opacity=".8" />
       </svg>
       <span className="whitespace-nowrap">Resume Creator</span>
     </span>

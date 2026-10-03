@@ -215,7 +215,7 @@ test('unknown routes and résumés show a helpful not-found page', async ({ page
   await expect(page.getByRole('heading', { name: 'Your résumés' })).toBeVisible();
   const res = await page.goto('/nope/at/all');
   expect(res?.status()).toBe(404);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'We couldn’t find that page' })).toBeVisible();
   // The browser logs the expected 404 response itself; nothing else may error.
   expect(errors.filter((e) => !e.includes('404'))).toEqual([]);
   errors.length = 0;

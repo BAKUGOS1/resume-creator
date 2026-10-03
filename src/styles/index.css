@@ -17,19 +17,19 @@
 
 /* Semantic colour tokens; components only use these (bg-surface, text-muted, …). */
 :root {
-  --bg: #f6f5f2;
+  --bg: #f3f5f8;
   --surface: #ffffff;
-  --surface-2: #f2f0ec;
-  --surface-3: #e9e6e1;
-  --line: #e2ded8;
-  --line-strong: #cfcac2;
-  --fg: #1a1815;
-  --muted: #6a645c;
-  --subtle: #736d65;
-  --brand: #b9491a;
-  --brand-hover: #9f3d14;
+  --surface-2: #eef1f5;
+  --surface-3: #e3e7ee;
+  --line: #dde2ea;
+  --line-strong: #c9d0db;
+  --fg: #141b2d;
+  --muted: #535c70;
+  --subtle: #646d80;
+  --brand: #2340b8;
+  --brand-hover: #1a3296;
   --brand-fg: #ffffff;
-  --brand-soft: #fbeee7;
+  --brand-soft: #e8ecfb;
   --danger: #b42318;
   --danger-soft: #fdecea;
   --warning: #9a6200;
@@ -38,24 +38,24 @@
   --success-soft: #e6f5ec;
   --info: #2457c5;
   --info-soft: #e8effc;
-  --canvas: #e7e4df;
-  --paper-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 12px 32px -12px rgb(0 0 0 / 0.25);
+  --canvas: #e2e6ed;
+  --paper-shadow: 0 1px 2px rgb(20 27 45 / 0.08), 0 14px 34px -14px rgb(20 27 45 / 0.3);
 }
 
 .dark {
-  --bg: #0f0e0d;
-  --surface: #171615;
-  --surface-2: #1f1e1c;
-  --surface-3: #2a2826;
-  --line: #2e2c29;
-  --line-strong: #403d39;
-  --fg: #f2efea;
-  --muted: #a7a198;
-  --subtle: #8f897f;
-  --brand: #e2672f;
-  --brand-hover: #f07c45;
-  --brand-fg: #1a0b04;
-  --brand-soft: #2d1a10;
+  --bg: #0d1220;
+  --surface: #141b2c;
+  --surface-2: #1a2236;
+  --surface-3: #232c44;
+  --line: #263049;
+  --line-strong: #36415e;
+  --fg: #e9edf6;
+  --muted: #a9b1c3;
+  --subtle: #8b94a8;
+  --brand: #8ea6ff;
+  --brand-hover: #aabcff;
+  --brand-fg: #0b1330;
+  --brand-soft: #1a2444;
   --danger: #f97066;
   --danger-soft: #3a1714;
   --warning: #fdb022;
@@ -64,7 +64,7 @@
   --success-soft: #0f2a1c;
   --info: #84adff;
   --info-soft: #14213d;
-  --canvas: #0a0908;
+  --canvas: #090d18;
   --paper-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), 0 16px 40px -12px rgb(0 0 0 / 0.8);
 }
 
@@ -110,7 +110,8 @@
     outline-offset: 2px;
   }
   ::selection {
-    background: color-mix(in oklab, var(--brand) 25%, transparent);
+    background: #ffe066;
+    color: #141b2d;
   }
   dialog::backdrop {
     background: rgb(10 9 8 / 0.5);

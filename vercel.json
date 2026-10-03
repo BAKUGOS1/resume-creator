@@ -64,6 +64,15 @@
           "value": "public, max-age=2592000"
         }
       ]
+    },
+    {
+      "source": "/(templates|og)/(.*)\\.(webp|png)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
     }
   ],
   "cleanUrls": false,
@@ -76,6 +85,16 @@
     {
       "source": "/index.html",
       "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/:slug([a-z0-9-]+)",
+      "destination": "/blog/:slug/",
+      "permanent": true
+    },
+    {
+      "source": "/templates/:id([a-z]+)",
+      "destination": "/templates/:id/",
       "permanent": true
     }
   ]
