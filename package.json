@@ -4,9 +4,7 @@
   "private": true,
   "description": "Production single-page ATS-optimized resume builder with vector jsPDF engine and Word export.",
   "scripts": {
-    "dev": "npx serve .",
-    "start": "npx serve .",
-    "build": "echo 'Static build ready'"
+    "dev": "npx serve ."
   },
   "keywords": [
     "resume",
