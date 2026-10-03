@@ -44,9 +44,8 @@ function head(o: HeadOptions, a: Assets): string {
 <meta name="description" content="${e(o.description)}">
 <link rel="canonical" href="${url}">
 <meta name="robots" content="${o.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}">
-<meta name="theme-color" content="#eef1f5" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d1220" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#eef1f5">
+<meta name="color-scheme" content="light">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -274,23 +273,11 @@ export function renderHome(a: Assets, posts: Post[]): string {
       </div>
       <p class="hero-note">No account needed. Your résumé stays in this browser.</p>
     </div>
-    <div class="scan" aria-label="Example: a résumé and the fields an applicant tracking system reads from it" role="group">
+    <div class="scan" aria-label="Example résumé" role="group">
       <figure class="sheet">
         <img src="/templates/timeline.webp" width="600" height="849" alt="A résumé made with the Timeline template" fetchpriority="high" decoding="async">
         <span class="scanline" aria-hidden="true"></span>
       </figure>
-      <div class="parsed">
-        <p class="parsed-title"><span class="dot" aria-hidden="true"></span>What an ATS reads</p>
-        <dl>
-          <div><dt>Name</dt><dd>Jordan Ellis</dd></div>
-          <div><dt>Title</dt><dd>Senior Software Engineer</dd></div>
-          <div><dt>Email</dt><dd>jordan.ellis@example.com</dd></div>
-          <div><dt>Location</dt><dd>Austin, TX</dd></div>
-          <div><dt>Latest role</dt><dd>Northwind Payments, Mar 2021 – Present</dd></div>
-          <div><dt>Skills</dt><dd><mark>TypeScript</mark> <mark>Go</mark> <mark>PostgreSQL</mark> <mark>Kafka</mark> AWS</dd></div>
-        </dl>
-        <p class="parsed-foot">Every field in reading order, nothing scrambled.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -302,20 +289,20 @@ export function renderHome(a: Assets, posts: Post[]): string {
       <h2 id="tpl-title">Smart templates for every career stage</h2>
       <p>Classic or colourful, every design keeps a single reading order, real text and standard headings. Switch any time without retyping.</p>
     </div>
-  </div>
-  <div class="ticker" data-ticker>
-    <div class="ticker-viewport" role="region" aria-label="Résumé templates. Use the arrow keys to browse." tabindex="0">
-      <div class="ticker-clip">
-        <div class="ticker-track">
-          <ul class="ticker-group">${TICKER_ORDER.map(tickerCard).join('')}</ul>
+    <div class="ticker" data-ticker>
+      <div class="ticker-viewport" role="region" aria-label="Résumé templates. Use the arrow keys to browse." tabindex="0">
+        <div class="ticker-clip">
+          <div class="ticker-track">
+            <ul class="ticker-group">${TICKER_ORDER.map(tickerCard).join('')}</ul>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="wrap tpl-actions">
-    <a class="btn btn-primary" href="/resumes" data-cta="templates">Start with any template — it’s free</a>
-    <a class="btn btn-quiet" href="/templates/">Compare all templates</a>
-    <button class="btn btn-quiet ticker-toggle" type="button" hidden>Pause</button>
+    <div class="tpl-actions">
+      <a class="btn btn-primary" href="/resumes" data-cta="templates">Start with any template — it’s free</a>
+      <a class="btn btn-quiet" href="/templates/">Compare all templates</a>
+      <button class="btn btn-quiet ticker-toggle" type="button" hidden>Pause</button>
+    </div>
   </div>
 </section>
 
