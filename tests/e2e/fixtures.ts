@@ -2,11 +2,11 @@ import { test as base, expect, type Page } from '@playwright/test';
 
 /** Fails the test on any console error, uncaught exception or CSP violation. */
 export const test = base.extend<{ errors: string[] }>({
-  errors: async ({ page }, use) => {
+  errors: async ({ page }, provide) => {
     const errors: string[] = [];
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
     page.on('pageerror', (e) => errors.push(e.message));
-    await use(errors);
+    await provide(errors);
     expect(errors, 'browser console errors').toEqual([]);
   },
 });

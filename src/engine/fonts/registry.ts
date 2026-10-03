@@ -25,7 +25,7 @@ export type FaceId = keyof typeof FACES;
 /** All faces reachable from `faces` through the fallback chain. */
 export function withFallbacks(faces: Iterable<FaceId>): FaceId[] {
   const out = new Set<FaceId>();
-  for (let f of faces) {
+  for (const f of faces) {
     for (let cur: FaceId | null = f; cur && !out.has(cur); cur = FACES[cur].fallback) out.add(cur);
   }
   return [...out];

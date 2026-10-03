@@ -32,7 +32,7 @@ export function paginate(blocks: Block[], frame: PageFrame): Page[] {
     y += b.height;
   };
 
-  for (let i = 0; i < blocks.length; ) {
+  for (let i = 0; i < blocks.length;) {
     let j = i;
     while (j < blocks.length - 1 && blocks[j]!.keepWithNext) j++;
     let chain = blocks[i]!.height;

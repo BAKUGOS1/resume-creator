@@ -8,8 +8,8 @@ Live: [mohitstack.vercel.app](https://mohitstack.vercel.app)
 
 - **Live preview = the PDF.** One layout engine produces draw operations. The SVG preview, the PDF and print all render the same ops with the same font files, so line breaks always match.
 - **Eight ATS-safe templates.** Modern, Classic, Signature (the original design) and Compact, plus four newer design directions: **Timeline** (dates in a gutter beside a timeline rule), **Editorial** (serif display name, hairline headings), **Accent Rail** (coloured rail headings, thin page edge) and **Executive Banner** (softly tinted header band). Every template keeps one reading order per line, real text, standard headings and clickable links.
-- **Responsive web résumé.** The preview toggles between *Page* (pixel-exact PDF layout) and *Web*, a semantic HTML résumé that reflows on phones, tablets and desktops. Phone, tablet and desktop width presets are built in, and you can export it as a self-contained `.html` with schema.org `Person` data. Phones open the Web view by default.
-- **Multi-page with smart pagination.** Headings never end a page alone, short entries stay together, and multi-page résumés get page footers. Optional *fit to one page* shrinks text down to a readable minimum.
+- **Responsive web résumé.** The preview toggles between _Page_ (pixel-exact PDF layout) and _Web_, a semantic HTML résumé that reflows on phones, tablets and desktops. Phone, tablet and desktop width presets are built in, and you can export it as a self-contained `.html` with schema.org `Person` data. Phones open the Web view by default.
+- **Multi-page with smart pagination.** Headings never end a page alone, short entries stay together, and multi-page résumés get page footers. Optional _fit to one page_ shrinks text down to a readable minimum.
 - **Structured editor.** Personal details, summary, experience, education, projects, skills, certifications and custom sections. You can reorder, hide, duplicate and rename sections and items. Bullets support **bold** markup, Enter for a new line and Alt+↑/↓ to reorder.
 - **Validation and résumé health.** Format errors show next to the field. A Check tab scores the résumé and lists issues (missing contact details, inverted dates, bad links, weak verbs, unquantified bullets, unsupported characters). Clicking an issue jumps to the field.
 - **Design controls.** Accent colour, text size, margins, spacing, A4 or US Letter, and date format.
@@ -27,17 +27,17 @@ npm run dev          # http://localhost:5173
 
 Requires Node 20.19+ (see `.nvmrc`).
 
-| Script | What it does |
-| --- | --- |
-| `npm run dev` | Vite dev server (landing at `/`, builder at `/resumes`) |
-| `npm run build` | Type-check and build to `dist/` |
-| `npm start` | Serve `dist/` with the hardened production server (port 4173) |
-| `npm run typecheck` | Strict TypeScript for the app, tests and configs |
-| `npm run lint` / `npm run format` | ESLint / Prettier |
-| `npm test` | Unit tests (Vitest): domain, layout engine, PDF, DOCX, store |
-| `npm run test:e2e` | Playwright end-to-end, mobile and axe accessibility tests (first run: `npx playwright install chromium`) |
-| `npm run check` | Runs all of the above in order (also used in CI) |
-| `npm run fonts` | Rebuild the subset fonts (`pip install fonttools` and a checkout of [google/fonts](https://github.com/google/fonts)) |
+| Script                            | What it does                                                                                                         |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                     | Vite dev server (landing at `/`, builder at `/resumes`)                                                              |
+| `npm run build`                   | Type-check and build to `dist/`                                                                                      |
+| `npm start`                       | Serve `dist/` with the hardened production server (port 4173)                                                        |
+| `npm run typecheck`               | Strict TypeScript for the app, tests and configs                                                                     |
+| `npm run lint` / `npm run format` | ESLint / Prettier                                                                                                    |
+| `npm test`                        | Unit tests (Vitest): domain, layout engine, PDF, DOCX, store                                                         |
+| `npm run test:e2e`                | Playwright end-to-end, mobile and axe accessibility tests (first run: `npx playwright install chromium`)             |
+| `npm run check`                   | Runs all of the above in order (also used in CI)                                                                     |
+| `npm run fonts`                   | Rebuild the subset fonts (`pip install fonttools` and a checkout of [google/fonts](https://github.com/google/fonts)) |
 
 ## Project layout
 
@@ -65,7 +65,7 @@ tests/         unit/ (Vitest) and e2e/ (Playwright)
 ## Your data
 
 - Résumés are stored in this browser's `localStorage` (`rc.v2.*` keys) and never uploaded.
-- Use **Back up all** on the dashboard (or per-résumé *Download JSON backup*) to move between browsers. **Restore** imports backups, single exports and the original app's JSON format.
+- Use **Back up all** on the dashboard (or per-résumé _Download JSON backup_) to move between browsers. **Restore** imports backups, single exports and the original app's JSON format.
 - On first load, data saved by the original single-page app (`mohit_resume_classic_data`) is imported automatically.
 - `public/samples/mohit-kumar.json` is the original résumé, converted to the v2 format. Import it from the dashboard.
 

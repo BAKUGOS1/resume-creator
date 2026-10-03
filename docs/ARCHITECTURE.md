@@ -22,18 +22,18 @@
 
 ## Layers and rules
 
-| Layer | May import | Notes |
-| --- | --- | --- |
-| `domain/` | `lib/` | Pure, no DOM, no React. Owns the schema and every business rule. |
-| `engine/` | `domain/`, `lib/` | Pure; runs in Node (tests) and the browser. Units are PDF points. |
-| `store/` | `domain/`, `lib/` | The only code that writes to `localStorage`. |
-| `features/`, `components/`, `app/` | everything | React UI. Calls store commands; never mutates résumés directly. |
+| Layer                              | May import        | Notes                                                             |
+| ---------------------------------- | ----------------- | ----------------------------------------------------------------- |
+| `domain/`                          | `lib/`            | Pure, no DOM, no React. Owns the schema and every business rule.  |
+| `engine/`                          | `domain/`, `lib/` | Pure; runs in Node (tests) and the browser. Units are PDF points. |
+| `store/`                           | `domain/`, `lib/` | The only code that writes to `localStorage`.                      |
+| `features/`, `components/`, `app/` | everything        | React UI. Calls store commands; never mutates résumés directly.   |
 
 ## Layout engine
 
 1. **Fonts** (`engine/fonts`). Static subset TTFs are parsed by a ~100-line reader (`ttf.ts`) that returns advance widths and the cmap. Widths are `advance / unitsPerEm` with no kerning, exactly like jsPDF, so screen and PDF line breaks match (a unit test asserts this). Each face falls back to a wider-coverage face per character (`registry.ts`).
 2. **Text** (`layout/text.ts`). Tokenises runs, supports `**bold**`, breaks greedily at spaces, hard-breaks over-long words, and splits each piece by font.
-3. **Composer** (`layout/composer.ts`). Turns content into *blocks* (a line, a rule, a heading) that carry collapsible space-before and a keep-with-next flag.
+3. **Composer** (`layout/composer.ts`). Turns content into _blocks_ (a line, a rule, a heading) that carry collapsible space-before and a keep-with-next flag.
 4. **Paginator** (`layout/paginate.ts`). Places blocks on pages. A keep-with-next chain moves to the next page as a whole when it doesn't fit (heading + entry title + first bullet), and spacing collapses at the top of a page.
 5. **Templates** (`templates/`). Optional `features` (`headerBand`, `timeline`, `pageEdge`) and extra heading variants (`rail`, `hairline`, `underbar`) are opt-in, so templates without them render byte-for-byte as before. `tests/unit/templates.test.ts` enforces this with golden hashes for the original four templates.
    A `TemplateSpec` is declarative: faces, sizes, palette, header and section-heading variant, plus Word settings. One shared renderer (`render.ts`) turns a résumé plus a spec into blocks, which keeps every template single-column and ATS-safe.
@@ -42,12 +42,14 @@
 ## Recipes
 
 ### Add a template
+
 1. Add the id to `TEMPLATE_IDS` in `domain/schema.ts`.
 2. Add a `TemplateSpec` in `engine/templates/specs.ts` and list it in `TEMPLATES` and `TEMPLATE_LIST`.
 3. If it needs a new font, add the face to `scripts/build-fonts.py` and `engine/fonts/registry.ts`, then run `npm run fonts`.
 4. The engine test "renders the sample on one page with the … template" covers it automatically.
 
 ### Add a section type
+
 1. Add an item schema and a section schema in `domain/schema.ts`, and add the section to `SectionSchema`.
 2. Add a factory in `createItem`/`createSection` and add `SECTION_META` in `domain/defaults.ts`.
 3. Render it in `engine/templates/render.ts`, `engine/docx/buildDocx.ts` and `engine/text/plainText.ts`.
@@ -55,16 +57,17 @@
 5. Add any checks to `domain/checks.ts`.
 
 ### Change the schema
+
 1. Bump `SCHEMA_VERSION` and extend `coerceResume` in `domain/migrate.ts` so old documents are upgraded (it already fills missing fields with defaults).
 2. Saved data is re-validated on every load, and damaged entries are skipped and reported rather than crashing the app.
 
 ## Pages and routes
 
-| URL | Served file | Purpose |
-| --- | --- | --- |
-| `/` | `index.html` | Static SEO landing page (no React, tiny CSS, progressive-enhancement script) |
-| `/resumes`, `/resume/:id` | `app.html` | React builder (`noindex`) |
-| anything else | `404.html` | Real 404 status |
+| URL                       | Served file  | Purpose                                                                      |
+| ------------------------- | ------------ | ---------------------------------------------------------------------------- |
+| `/`                       | `index.html` | Static SEO landing page (no React, tiny CSS, progressive-enhancement script) |
+| `/resumes`, `/resume/:id` | `app.html`   | React builder (`noindex`)                                                    |
+| anything else             | `404.html`   | Real 404 status                                                              |
 
 The Vite dev and preview servers apply the same rewrites through the `app-routes` plugin in `vite.config.ts`. So do `vercel.json` and `server.js`.
 
