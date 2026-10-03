@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'UI Sans';
+  src: url('/fonts/gsf-400.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'UI Sans';
+  src: url('/fonts/gsf-600.ttf') format('truetype');
+  font-weight: 500 700;
+  font-display: swap;
+}
+
+/* Semantic colour tokens; components only use these (bg-surface, text-muted, …). */
+:root {
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-2: #f2f0ec;
+  --surface-3: #e9e6e1;
+  --line: #e2ded8;
+  --line-strong: #cfcac2;
+  --fg: #1a1815;
+  --muted: #6a645c;
+  --subtle: #736d65;
+  --brand: #b9491a;
+  --brand-hover: #9f3d14;
+  --brand-fg: #ffffff;
+  --brand-soft: #fbeee7;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --warning: #9a6200;
+  --warning-soft: #fff4dc;
+  --success: #1c7c4a;
+  --success-soft: #e6f5ec;
+  --info: #2457c5;
+  --info-soft: #e8effc;
+  --canvas: #e7e4df;
+  --paper-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 12px 32px -12px rgb(0 0 0 / 0.25);
+}
+
+.dark {
+  --bg: #0f0e0d;
+  --surface: #171615;
+  --surface-2: #1f1e1c;
+  --surface-3: #2a2826;
+  --line: #2e2c29;
+  --line-strong: #403d39;
+  --fg: #f2efea;
+  --muted: #a7a198;
+  --subtle: #8f897f;
+  --brand: #e2672f;
+  --brand-hover: #f07c45;
+  --brand-fg: #1a0b04;
+  --brand-soft: #2d1a10;
+  --danger: #f97066;
+  --danger-soft: #3a1714;
+  --warning: #fdb022;
+  --warning-soft: #33260a;
+  --success: #47cd89;
+  --success-soft: #0f2a1c;
+  --info: #84adff;
+  --info-soft: #14213d;
+  --canvas: #0a0908;
+  --paper-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), 0 16px 40px -12px rgb(0 0 0 / 0.8);
+}
+
+@theme inline {
+  --font-sans: 'UI Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-fg: var(--brand-fg);
+  --color-brand-soft: var(--brand-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-canvas: var(--canvas);
+  --shadow-paper: var(--paper-shadow);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--brand) 25%, transparent);
+  }
+  dialog::backdrop {
+    background: rgb(10 9 8 / 0.5);
+    backdrop-filter: blur(2px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .resume-page text {
+    font-kerning: none;
+    font-variant-ligatures: none;
+    white-space: pre;
+  }
+}
+
+#print-root {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+  }
+  body > #root,
+  body > [data-toaster] {
+    display: none !important;
+  }
+  #print-root {
+    display: block;
+  }
+  #print-root svg {
+    display: block;
+    break-after: page;
+    page-break-after: always;
+  }
+  #print-root svg:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

@@ -1,0 +1,334 @@
+{
+  "app": "resume-creator",
+  "format": "resume",
+  "version": 2,
+  "exportedAt": "2026-10-03T11:04:12.695Z",
+  "resume": {
+    "schemaVersion": 2,
+    "id": "r_6a870a202c4648c7",
+    "title": "Mohit Kumar — Full-Stack Product Engineer",
+    "createdAt": "2026-10-03T11:04:12.677Z",
+    "updatedAt": "2026-10-03T11:04:12.677Z",
+    "templateId": "signature",
+    "design": {
+      "pageSize": "a4",
+      "accent": null,
+      "fontScale": 1,
+      "margins": "normal",
+      "spacing": "normal",
+      "dateFormat": "short",
+      "fitToPage": true
+    },
+    "basics": {
+      "name": "Mohit Kumar",
+      "headline": "Full-Stack Product Engineer",
+      "tagline": "Screen to database to tests",
+      "email": "mohit.bakugo@gmail.com",
+      "phone": "+91 91730 86652",
+      "location": "Ahmedabad, India",
+      "links": [
+        {
+          "id": "l_962507bc59694380",
+          "label": "LinkedIn",
+          "url": "linkedin.com/in/mohitanimator9898"
+        },
+        {
+          "id": "l_512d906c7c79462d",
+          "label": "GitHub",
+          "url": "github.com/BAKUGOS1"
+        },
+        {
+          "id": "l_5a76c91ed5074313",
+          "label": "Website",
+          "url": "mohitstack.vercel.app"
+        }
+      ]
+    },
+    "sections": [
+      {
+        "id": "s_4aaa735d3c31489e",
+        "title": "Summary",
+        "visible": true,
+        "kind": "summary",
+        "content": "Full-stack product engineer who designs, builds and ships web and mobile products end to end: interface, API, database and automated tests. Three years in accounts operations bring a practical understanding of the business workflows that software must support."
+      },
+      {
+        "id": "s_55aa7fdb983a45c9",
+        "title": "Experience",
+        "visible": true,
+        "kind": "experience",
+        "items": [
+          {
+            "id": "i_07bdaa73a1a849e9",
+            "visible": true,
+            "start": "2025-11",
+            "end": "",
+            "current": true,
+            "role": "Software Engineer, Product & Support",
+            "organization": "Zybra Accounting Software",
+            "location": "",
+            "url": "",
+            "bullets": [
+              {
+                "id": "b_7021aacc65d74c2e",
+                "text": "Rebuilt the company website in Next.js, matching the live site one to one."
+              },
+              {
+                "id": "b_ac007c829bb94a3c",
+                "text": "Added a release gate: every build must pass lint, unit tests, Playwright end-to-end tests and a production build."
+              },
+              {
+                "id": "b_03e2ca9499fd43be",
+                "text": "Diagnose and resolve customer issues in the company's accounting software."
+              }
+            ]
+          },
+          {
+            "id": "i_2c35548dd8564b13",
+            "visible": true,
+            "start": "2022-10",
+            "end": "2025-10",
+            "current": false,
+            "role": "Accounts and Office Operations",
+            "organization": "",
+            "location": "",
+            "url": "",
+            "bullets": [
+              {
+                "id": "b_91960cdced964bcb",
+                "text": "Managed accounting, cashiering and bank reconciliation for high-volume stores across multiple companies."
+              },
+              {
+                "id": "b_109fed3bef244b79",
+                "text": "Maintained records on ERP and POS systems and trained new staff to use them."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "s_a7050afa6bc14f47",
+        "title": "Projects",
+        "visible": true,
+        "kind": "projects",
+        "items": [
+          {
+            "id": "i_afb378d6e2cc43e5",
+            "visible": true,
+            "start": "2026-05",
+            "end": "",
+            "current": true,
+            "name": "Phere",
+            "subtitle": "Wedding finance app · Web, Android, iOS",
+            "url": "https://app.wrkly.in",
+            "stack": "React, Supabase, PostgreSQL, Capacitor",
+            "bullets": [
+              {
+                "id": "b_bdbd70b09b434a2f",
+                "text": "Designed, built and shipped solo; live in production with active users, now at v3.0.0."
+              },
+              {
+                "id": "b_356a79ca6f4149e0",
+                "text": "Unified wedding budgets, expenses, vendors, guests, RSVPs and e-invites in one secure workspace."
+              },
+              {
+                "id": "b_131b59bf9e444066",
+                "text": "Secured data with Supabase Auth, roles and row-level security; added OCR and AI through Edge Functions."
+              },
+              {
+                "id": "b_e5d247390f3e4fca",
+                "text": "Built an encrypted offline outbox that syncs changes safely on reconnect."
+              }
+            ]
+          },
+          {
+            "id": "i_ad2c8e1159af4204",
+            "visible": true,
+            "start": "2026-06",
+            "end": "",
+            "current": false,
+            "name": "QaAgent-Pro",
+            "subtitle": "Open-source QA agent",
+            "url": "https://github.com/BAKUGOS1/QaAgent-Pro",
+            "stack": "TypeScript, Playwright, Node.js",
+            "bullets": [
+              {
+                "id": "b_331acbf472d24b18",
+                "text": "Tests a custom enterprise CRM the way a human QA engineer would, across 56 deterministic scenarios."
+              },
+              {
+                "id": "b_736f930d43a1401f",
+                "text": "Splits the work across five roles: planner, risk analyst, executor, defect verifier and release judge."
+              },
+              {
+                "id": "b_ff3f57b4dbe74c93",
+                "text": "Writes only to verified staging, then delivers a go or no-go Excel report with evidence."
+              }
+            ]
+          },
+          {
+            "id": "i_004a9553720d4444",
+            "visible": true,
+            "start": "2026-09",
+            "end": "",
+            "current": true,
+            "name": "Taazu",
+            "subtitle": "Operations CRM · Client project",
+            "url": "https://taazu.vercel.app",
+            "stack": "TypeScript, React, Next.js, Supabase",
+            "bullets": [
+              {
+                "id": "b_373e287f14b546b0",
+                "text": "Built a custom CRM for a business owner running a drink-brand pilot in Ahmedabad."
+              },
+              {
+                "id": "b_b8e87faa40724708",
+                "text": "Brings live KPIs, supplier and buyer directories, budget tracking and a city map into one place."
+              },
+              {
+                "id": "b_30b30ce443904b40",
+                "text": "Added a spreadsheet importer with column matching, deduplication and undo."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "s_d01d3e45d8a94ab8",
+        "title": "Also built",
+        "visible": true,
+        "kind": "custom",
+        "layout": "compact",
+        "items": [
+          {
+            "id": "i_ccf4ae0b4a3543ef",
+            "visible": true,
+            "start": "",
+            "end": "",
+            "current": false,
+            "title": "BeforeCode",
+            "subtitle": "",
+            "location": "",
+            "url": "https://github.com/BAKUGOS1/beforecode",
+            "description": "npm CLI for AI coding agents",
+            "bullets": []
+          },
+          {
+            "id": "i_94073f5087034809",
+            "visible": true,
+            "start": "",
+            "end": "",
+            "current": false,
+            "title": "CanvaSync",
+            "subtitle": "",
+            "location": "",
+            "url": "https://github.com/BAKUGOS1/canvasync",
+            "description": "real-time collaborative canvas",
+            "bullets": []
+          },
+          {
+            "id": "i_ebaf98d81a904ed5",
+            "visible": true,
+            "start": "",
+            "end": "",
+            "current": false,
+            "title": "CaseSheet",
+            "subtitle": "",
+            "location": "",
+            "url": "https://github.com/BAKUGOS1/casesheet",
+            "description": "Smart India Hackathon project",
+            "bullets": []
+          }
+        ]
+      },
+      {
+        "id": "s_7963035323654ea3",
+        "title": "Skills",
+        "visible": true,
+        "kind": "skills",
+        "items": [
+          {
+            "id": "i_ebae8ed64ba3463e",
+            "visible": true,
+            "label": "Languages",
+            "keywords": "TypeScript, JavaScript, Go, Python, SQL"
+          },
+          {
+            "id": "i_da4aa30d0c014486",
+            "visible": true,
+            "label": "Interface (Frontend)",
+            "keywords": "React, Next.js, Vite, Tailwind CSS, shadcn/ui, Capacitor, PWA"
+          },
+          {
+            "id": "i_3d8a8370674141a4",
+            "visible": true,
+            "label": "API (Backend)",
+            "keywords": "Node.js, Supabase Edge Functions, REST, gRPC, Django"
+          },
+          {
+            "id": "i_203ecea5fa294da6",
+            "visible": true,
+            "label": "Data",
+            "keywords": "PostgreSQL, Supabase, Prisma, Drizzle, row-level security"
+          },
+          {
+            "id": "i_7f7ef8e1682444fd",
+            "visible": true,
+            "label": "QA (Testing & CI)",
+            "keywords": "Playwright, Vitest, axe accessibility testing, risk-based testing, GitHub Actions"
+          },
+          {
+            "id": "i_7cc0cf4aedbe4b3e",
+            "visible": true,
+            "label": "AI tooling",
+            "keywords": "Claude Code, Codex, agent workflows, OCR pipelines"
+          },
+          {
+            "id": "i_35c4cede9d39425b",
+            "visible": true,
+            "label": "Domain",
+            "keywords": "Accounting, reconciliation, ERP, POS"
+          },
+          {
+            "id": "i_001affc8fe4a4195",
+            "visible": true,
+            "label": "Spoken",
+            "keywords": "English, Hindi, Gujarati"
+          }
+        ]
+      },
+      {
+        "id": "s_3928e45f86314d1e",
+        "title": "Education",
+        "visible": true,
+        "kind": "education",
+        "items": [
+          {
+            "id": "i_741c3e73159142fd",
+            "visible": true,
+            "start": "2022",
+            "end": "2026",
+            "current": false,
+            "degree": "BCA (Bachelor of Computer Applications)",
+            "institution": "Monark University",
+            "location": "",
+            "score": "",
+            "bullets": []
+          },
+          {
+            "id": "i_e4438c80b2424812",
+            "visible": true,
+            "start": "",
+            "end": "2022",
+            "current": false,
+            "degree": "Higher Secondary, Commerce",
+            "institution": "Om Shanti Higher Secondary",
+            "location": "",
+            "score": "",
+            "bullets": []
+          }
+        ]
+      }
+    ]
+  }
+}
