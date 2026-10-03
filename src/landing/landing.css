@@ -269,38 +269,156 @@ h3 {
   font-size: 1.08rem;
   line-height: 1.3;
 }
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
-  gap: clamp(1rem, 2.5vw, 1.75rem);
-  margin: 2.25rem 0 0;
-  padding: 0;
-  list-style: none;
+/* Template Ticker (infinite marquee ported from Zybra architecture) */
+.template-header {
+  text-align: center;
+  max-width: 48rem;
+  margin-inline: auto;
 }
-.gallery figure {
-  margin: 0;
+.template-header .eyebrow {
+  margin-bottom: 0.85rem;
 }
-.gallery img {
-  border-radius: 6px;
-  background: #fff;
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.06),
-    0 14px 30px -18px rgb(0 0 0 / 0.35);
-  transition: transform 0.2s ease;
+.template-header .section-lede {
+  margin-inline: auto;
 }
-.gallery li:hover img {
+
+.template-ticker {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding: 0.5rem 0 1.5rem;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.template-ticker:active,
+.template-ticker.is-dragging {
+  cursor: grabbing;
+}
+
+.template-track {
+  display: flex;
+  width: max-content;
+  gap: 1.25rem;
+  will-change: transform;
+}
+
+.template-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1.25rem;
+}
+
+/* Strictly ZERO-SHADOW across template cards matching Zybra design rules */
+.template-card {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  width: clamp(240px, 20vw, 290px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--fg);
+  box-shadow: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.template-card:hover {
+  border-color: var(--brand);
   transform: translateY(-3px);
 }
-.gallery figcaption {
-  margin-top: 0.85rem;
-  color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
+
+.template-card:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
-.gallery figcaption strong {
+
+.template-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 600 / 849;
+  background: #fff;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+.template-frame img {
   display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  pointer-events: none;
+  user-select: none;
+}
+
+.template-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem 1.05rem 1.1rem;
+}
+
+.template-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.template-name {
+  font-size: 1.02rem;
+  font-weight: 600;
   color: var(--fg);
-  font-size: 1rem;
+}
+
+.template-pill {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--brand);
+  background: var(--brand-soft);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.template-desc {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.44;
+  color: var(--muted);
+}
+
+.templates-action {
+  text-align: center;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+@media (max-width: 48rem) {
+  .template-card {
+    width: clamp(210px, 66vw, 260px);
+  }
+  .template-ticker {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .template-track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .template-card {
+    scroll-snap-align: start;
+  }
 }
 .features {
   display: grid;
