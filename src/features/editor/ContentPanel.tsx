@@ -13,7 +13,7 @@ export function ContentPanel({ resume }: { resume: Resume }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <BasicsCard basics={resume.basics} />
+      <BasicsCard basics={resume.basics} linkStyle={resume.design.linkStyle} />
       {resume.sections.map((s, i) => (
         <SectionCard key={s.id} section={s} index={i} count={resume.sections.length} />
       ))}

@@ -68,6 +68,38 @@ test('shows inline validation and jumps from the check panel to the field', asyn
   await expect(page.getByText('Enter a valid email address')).toHaveCount(0);
 });
 
+test('links show as labels with icons, open the real address, and can be customised', async ({ page }) => {
+  await openDashboard(page);
+  await createBlank(page);
+  await page.getByRole('button', { name: 'Add link' }).click();
+  await page.getByRole('textbox', { name: 'Link 1 URL' }).fill('https://github.com/ada');
+  // No label typed: the site name is suggested and used.
+  await expect(page.getByLabel('Link 1 label')).toHaveAttribute('placeholder', 'GitHub');
+  const preview = page.locator('.resume-page').first();
+  await expect.poll(() => previewText(page)).toContain('GitHub');
+  expect(await previewText(page)).not.toContain('github.com/ada');
+  await expect(preview.locator('a[href="https://github.com/ada"]').first()).toBeAttached();
+
+  // New résumés default to icon + text; pick a different icon.
+  await expect(page.getByRole('radio', { name: /Icon \+ text$/ })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('button', { name: /Icon for GitHub: Repository, automatic/ }).click();
+  await page.getByRole('menuitemradio', { name: 'Code' }).click();
+  await expect(page.getByRole('button', { name: /Icon for GitHub: Code$/ })).toBeFocused();
+
+  // Icon only hides the label but keeps the link, and the check panel explains the ATS trade-off.
+  await page.getByRole('radio', { name: /Icon$/ }).click();
+  await expect.poll(() => previewText(page)).not.toContain('GitHub');
+  await expect(preview.locator('a[href="https://github.com/ada"]').first()).toBeAttached();
+  await page.getByRole('tab', { name: /Check/ }).click();
+  await expect(page.getByText(/Icon-only links have no readable text/)).toBeVisible();
+
+  // Full address brings the URL back and hides the icon picker.
+  await page.getByRole('tab', { name: 'Content' }).click();
+  await page.getByRole('radio', { name: /Address$/ }).click();
+  await expect.poll(() => previewText(page)).toContain('github.com/ada');
+  await expect(page.getByRole('button', { name: /Icon for GitHub/ })).toHaveCount(0);
+});
+
 test('switches template, accent and paper size', async ({ page }) => {
   await openDashboard(page);
   await page.getByRole('link', { name: 'Sample — Software Engineer' }).click();

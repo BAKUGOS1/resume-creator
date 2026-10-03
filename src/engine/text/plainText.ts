@@ -1,6 +1,7 @@
 /** Plain-text export: the most ATS-proof format (paste into application forms). */
 import { formatDateRange, formatPartialDate } from '../../domain/dates';
 import type { Resume } from '../../domain/schema';
+import { linkText } from '../../domain/links';
 import { displayUrl } from '../../lib/url';
 
 const strip = (t: string) => t.replace(/\*\*/g, '').trim();
@@ -15,7 +16,14 @@ export function toPlainText(resume: Resume): string {
     .filter(Boolean)
     .join(' · ');
   if (headline) out.push(headline);
-  const contact = [b.location, b.phone, b.email, ...b.links.map((l) => displayUrl(l.url))].map((s) => s.trim()).filter(Boolean);
+  const contact = [
+    b.location,
+    b.phone,
+    b.email,
+    ...b.links.map((l) => (resume.design.linkStyle === 'url' || !l.url.trim() ? displayUrl(l.url) : `${linkText(l, 'text')}: ${displayUrl(l.url)}`)),
+  ]
+    .map((s) => s.trim())
+    .filter(Boolean);
   if (contact.length) out.push(contact.join(' | '));
 
   const line = (left: string, right: string) => (right ? `${left} (${right})` : left);

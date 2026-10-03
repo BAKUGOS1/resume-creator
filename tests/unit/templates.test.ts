@@ -8,7 +8,8 @@ import { layoutResume, loadFontsFor, TEMPLATE_LIST, TEMPLATES } from '../../src/
 import { buildDocxParts } from '../../src/engine/docx/buildDocx';
 import { nodeFontLoader } from './fonts';
 
-const fix = (r: Resume): Resume => ({ ...r, id: 'r', createdAt: 'x', updatedAt: 'x' });
+// Golden hashes were recorded with full-address links; pin that so they keep testing the templates alone.
+const fix = (r: Resume): Resume => ({ ...r, id: 'r', createdAt: 'x', updatedAt: 'x', design: { ...r.design, linkStyle: 'url' } });
 const golden: Record<string, string> = JSON.parse(readFileSync('tests/unit/template-golden.json', 'utf8'));
 let mohit: Resume;
 

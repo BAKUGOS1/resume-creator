@@ -7,7 +7,20 @@ import { createId } from '../lib/id';
 import { isValidEmail, isValidPhone, safeHref } from '../lib/url';
 import { parseLooseRange } from './dates';
 import { createBasics, createBlankResume, createBullet, createDesign, createItem, createSection, SECTION_META } from './defaults';
-import { LIMITS, ResumeSchema, SCHEMA_VERSION, TEMPLATE_IDS, type Bullet, type Resume, type Section, type SectionKind } from './schema';
+import {
+  LIMITS,
+  LINK_ICONS,
+  LINK_STYLES,
+  ResumeSchema,
+  SCHEMA_VERSION,
+  TEMPLATE_IDS,
+  type Bullet,
+  type LinkIcon,
+  type LinkStyle,
+  type Resume,
+  type Section,
+  type SectionKind,
+} from './schema';
 
 export const EXPORT_APP_ID = 'resume-creator';
 
@@ -104,6 +117,8 @@ export function coerceResume(raw: Obj): unknown {
       spacing: ['compact', 'normal', 'relaxed'].includes(design.spacing as string) ? design.spacing : defaults.spacing,
       dateFormat: ['short', 'long', 'numeric', 'year'].includes(design.dateFormat as string) ? design.dateFormat : defaults.dateFormat,
       fitToPage: bool(design.fitToPage, defaults.fitToPage),
+      // Older documents showed full addresses; keep them looking the same.
+      linkStyle: (LINK_STYLES as readonly unknown[]).includes(design.linkStyle) ? (design.linkStyle as LinkStyle) : 'url',
     },
     basics: {
       ...createBasics(),
@@ -116,7 +131,12 @@ export function coerceResume(raw: Obj): unknown {
       links: arr(basics.links)
         .slice(0, LIMITS.links)
         .filter(isObj)
-        .map((l) => ({ id: uniqueId(seen, l.id, 'l_'), label: str(l.label), url: str(l.url) })),
+        .map((l) => ({
+          id: uniqueId(seen, l.id, 'l_'),
+          label: str(l.label),
+          url: str(l.url),
+          icon: (LINK_ICONS as readonly unknown[]).includes(l.icon) ? (l.icon as LinkIcon) : 'auto',
+        })),
     },
     sections,
   };
@@ -158,7 +178,8 @@ export function fromLegacy(raw: Obj): Resume {
       if (href.startsWith('mailto:') || isValidEmail(text)) r.basics.email ||= text;
       else if (!href && isValidPhone(text)) r.basics.phone ||= text;
       else if (!href) r.basics.location ||= text;
-      else if (safeHref(href) && r.basics.links.length < LIMITS.links) r.basics.links.push({ id: createId('l_'), label: linkLabel(href), url: text });
+      else if (safeHref(href) && r.basics.links.length < LIMITS.links)
+        r.basics.links.push({ id: createId('l_'), label: linkLabel(href), url: text, icon: 'auto' });
     }
   }
 

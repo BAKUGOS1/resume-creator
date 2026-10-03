@@ -2,7 +2,7 @@
  * Résumé health checks: hard validation errors plus ATS/readability advice.
  * Pure functions so the same rules run in the editor, the check panel and tests.
  */
-import { isValidEmail, isValidPhone, isValidUrl } from '../lib/url';
+import { isValidEmail, isValidPhone, isValidUrl, safeHref } from '../lib/url';
 import { isRangeInverted } from './dates';
 import type { Resume, Section } from './schema';
 
@@ -51,8 +51,27 @@ export function checkResume(resume: Resume, layout?: LayoutFacts): Issue[] {
   if (!basics.location.trim()) add('tip', 'location', 'Add a city and country; many ATS filters use location.', { field: fieldId('basics', 'location') });
   basics.links.forEach((l) => {
     if (!l.url.trim()) add('warning', `link-empty-${l.id}`, `Link “${l.label || 'Untitled'}” has no URL.`, { field: fieldId('link', l.id, 'url') });
-    else if (!isValidUrl(l.url)) add('error', `link-${l.id}`, `“${l.url}” is not a valid web address.`, { field: fieldId('link', l.id, 'url'), inline: true });
+    else if (!safeHref(l.url) || l.url.trim().toLowerCase().startsWith('tel:'))
+      add('error', `link-${l.id}`, `“${l.url}” is not a valid web address or email.`, { field: fieldId('link', l.id, 'url'), inline: true });
   });
+  const linkStyle = resume.design.linkStyle;
+  if (linkStyle !== 'url' && basics.links.some((l) => l.url.trim())) {
+    const field = fieldId('basics', 'linkStyle');
+    if (linkStyle === 'icon')
+      add(
+        'warning',
+        'links-hidden',
+        'Icon-only links have no readable text, so ATS software and printed copies lose them. Show at least a label for your key profiles.',
+        { field },
+      );
+    else
+      add(
+        'tip',
+        'links-hidden',
+        'Your links show as labels. Links stay clickable in the PDF and Word file, but some ATS only read visible text. For strict portals, show full addresses.',
+        { field },
+      );
+  }
 
   const visible = resume.sections.filter((s) => s.visible);
   const summary = visible.find((s) => s.kind === 'summary');

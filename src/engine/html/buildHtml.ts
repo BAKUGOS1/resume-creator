@@ -4,10 +4,12 @@
  * search engines. No scripts, so it is safe to host anywhere or open offline.
  */
 import { formatDateRange, formatPartialDate, parsePartialDate, type DateFormat } from '../../domain/dates';
-import type { Resume, Section } from '../../domain/schema';
+import { linkIcon, linkText } from '../../domain/links';
+import type { LinkIcon, Resume, Section } from '../../domain/schema';
 import { displayUrl, safeHref } from '../../lib/url';
 import { FACES, type FaceId } from '../fonts/registry';
 import { toBase64, type FontSet } from '../fonts/loader';
+import { FIELD_ICONS, iconSvg } from '../icons';
 import { accentOf, templateOf } from '../index';
 import { parseInline } from '../layout/text';
 import { shade } from '../templates/specs';
@@ -253,6 +255,10 @@ h1{margin:0;font-family:var(--f-name);font-weight:var(--w-name);color:var(--ink)
 .cv-contact{display:flex;flex-wrap:wrap;${H.align === 'center' ? 'justify-content:center;' : ''}gap:.2rem 1.1rem;margin:.75rem 0 0;padding:0;list-style:none;font-size:.9rem;font-style:normal}
 address{font-style:normal}
 .cv-contact li{min-width:0}
+.cv-contact li,.cv-contact a{display:inline-flex;align-items:center;gap:.35em}
+.cv-icon{flex:none;width:1.05em;height:1.05em;color:var(--accent)}
+.cv-icon-only{padding:.15rem}
+.cv-icon-only .cv-icon{width:1.2em;height:1.2em}
 .cv-sec{margin-top:var(--gap)}
 .cv-sec h2{margin:0 0 .6rem;font-family:var(--f-label);font-weight:var(--w-label);color:${headingColor};font-size:${S.upper ? '.8rem' : '1.08rem'};${S.upper ? `text-transform:uppercase;letter-spacing:${Math.max(0.08, S.labelCs / 12).toFixed(2)}em;` : ''}line-height:1.3}
 ${
@@ -304,7 +310,7 @@ ${
 .cv--timeline .cv-sec--summary .cv-prose,.cv--timeline .cv-skills,.cv--timeline .cv-compact{margin-left:calc(8.5rem + 1.6rem)}}`
     : ''
 }
-@media (max-width:30rem){.cv-contact{flex-direction:column;gap:.15rem}.cv-contact a{display:inline-block;padding:.2rem 0}.cv-entry-head{flex-direction:column;align-items:flex-start}.cv-entry h3{flex:none}.cv-date{white-space:normal}.cv-compact li{flex-direction:column}}
+@media (max-width:30rem){.cv-contact{flex-direction:column;gap:.15rem}.cv-contact a{padding:.2rem 0}.cv-entry-head{flex-direction:column;align-items:flex-start}.cv-entry h3{flex:none}.cv-date{white-space:normal}.cv-compact li{flex-direction:column}}
 @media print{body{background:#fff}.cv{margin:0;max-width:none;box-shadow:none;padding:0}a{color:inherit;text-decoration:none}.cv-entry{break-inside:avoid}.cv-sec h2{break-after:avoid}@page{margin:14mm}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}`;
 }
@@ -322,11 +328,28 @@ export function buildResumeHtml(resume: Resume, opts: HtmlOptions = {}): string 
     .slice(0, 160);
   const title = `${name}${b.headline.trim() ? ` – ${b.headline.trim()}` : ''} | Résumé`;
 
+  const style = resume.design.linkStyle;
+  const withIcons = style === 'icon-text' || style === 'icon';
+  const ico = (icon: LinkIcon) => (withIcons ? iconSvg(icon) : '');
   const contact: string[] = [];
-  if (b.location.trim()) contact.push(`<li>${esc(b.location)}</li>`);
-  if (b.phone.trim()) contact.push(`<li><a href="tel:${esc(b.phone.replace(/[^\d+]/g, ''))}">${esc(b.phone)}</a></li>`);
-  if (b.email.trim()) contact.push(`<li>${link(b.email, b.email.trim())}</li>`);
-  for (const l of b.links) if (l.url.trim()) contact.push(`<li>${link(l.url)}</li>`);
+  if (b.location.trim()) contact.push(`<li>${ico(FIELD_ICONS.location)}<span>${esc(b.location)}</span></li>`);
+  if (b.phone.trim()) contact.push(`<li><a href="tel:${esc(b.phone.replace(/[^\d+]/g, ''))}">${ico(FIELD_ICONS.phone)}<span>${esc(b.phone)}</span></a></li>`);
+  if (b.email.trim()) {
+    const href = safeHref(b.email);
+    const inner = `${ico(FIELD_ICONS.email)}<span>${esc(b.email.trim())}</span>`;
+    contact.push(`<li>${href ? `<a href="${esc(href)}" rel="noopener noreferrer">${inner}</a>` : inner}</li>`);
+  }
+  for (const l of b.links) {
+    if (!l.url.trim()) continue;
+    const href = safeHref(l.url);
+    const text = linkText(l, style);
+    if (!href) contact.push(`<li>${esc(text)}</li>`);
+    else if (style === 'icon')
+      contact.push(
+        `<li><a class="cv-icon-only" href="${esc(href)}" rel="noopener noreferrer" aria-label="${esc(text)}" title="${esc(text)}">${iconSvg(linkIcon(l))}</a></li>`,
+      );
+    else contact.push(`<li><a href="${esc(href)}" rel="noopener noreferrer">${ico(linkIcon(l))}<span>${esc(text)}</span></a></li>`);
+  }
 
   const headline = [
     b.headline.trim() ? esc(b.headline) : '',

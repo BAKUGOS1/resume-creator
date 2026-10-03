@@ -24,9 +24,9 @@ export function createSampleResume(): Resume {
       phone: '+1 (555) 014-2290',
       location: 'Austin, TX',
       links: [
-        { id: createId('l_'), label: 'LinkedIn', url: 'linkedin.com/in/jordan-ellis-example' },
-        { id: createId('l_'), label: 'GitHub', url: 'github.com/jordan-ellis-example' },
-        { id: createId('l_'), label: 'Portfolio', url: 'jordanellis.example.com' },
+        { id: createId('l_'), label: 'LinkedIn', url: 'linkedin.com/in/jordan-ellis-example', icon: 'auto' },
+        { id: createId('l_'), label: 'GitHub', url: 'github.com/jordan-ellis-example', icon: 'auto' },
+        { id: createId('l_'), label: 'Portfolio', url: 'jordanellis.example.com', icon: 'auto' },
       ],
     }),
     sections: [

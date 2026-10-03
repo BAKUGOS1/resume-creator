@@ -138,7 +138,28 @@ export const SectionSchema = z.discriminatedUnion('kind', [
   CustomSectionSchema,
 ]);
 
-export const LinkSchema = z.object({ id, label: short, url: short });
+/** Original monoline glyphs (src/engine/icons.ts); "auto" picks one from the URL. */
+export const LINK_ICONS = [
+  'globe',
+  'briefcase',
+  'profile',
+  'repo',
+  'code',
+  'pen',
+  'mail',
+  'phone',
+  'pin',
+  'chat',
+  'image',
+  'play',
+  'book',
+  'external',
+] as const;
+export const LinkIconSchema = z.enum(LINK_ICONS);
+export const LinkSchema = z.object({ id, label: short, url: short, icon: z.union([LinkIconSchema, z.literal('auto')]) });
+
+/** How contact links appear: the full address, a label, a label with an icon, or the icon alone. */
+export const LINK_STYLES = ['url', 'text', 'icon-text', 'icon'] as const;
 
 export const BasicsSchema = z.object({
   name: short,
@@ -163,6 +184,7 @@ export const DesignSchema = z.object({
   dateFormat: z.enum(['short', 'long', 'numeric', 'year']),
   /** Shrink text (down to a readable minimum) to keep the résumé on one page. */
   fitToPage: z.boolean(),
+  linkStyle: z.enum(LINK_STYLES),
 });
 
 export const ResumeSchema = z.object({
@@ -189,6 +211,8 @@ export type SectionKind = Section['kind'];
 export type ListSection = Exclude<Section, { kind: 'summary' }>;
 export type SectionItem = ListSection['items'][number];
 export type Link = z.infer<typeof LinkSchema>;
+export type LinkIcon = z.infer<typeof LinkIconSchema>;
+export type LinkStyle = Design['linkStyle'];
 export type Basics = z.infer<typeof BasicsSchema>;
 export type TemplateId = z.infer<typeof TemplateIdSchema>;
 export type Design = z.infer<typeof DesignSchema>;

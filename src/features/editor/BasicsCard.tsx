@@ -1,28 +1,143 @@
+import { useId, type KeyboardEvent } from 'react';
 import { IconButton } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Field';
-import { ArrowDownIcon, ArrowUpIcon, LinkIcon, PlusIcon, Trash2Icon } from '../../components/ui/icons';
+import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, LinkIcon, PlusIcon, Trash2Icon } from '../../components/ui/icons';
+import { LinkGlyph } from '../../components/ui/LinkGlyph';
+import { Menu } from '../../components/ui/Menu';
 import { fieldId } from '../../domain/checks';
-import { LIMITS, type Basics } from '../../domain/schema';
+import { detectLink, linkIcon, linkText, LINK_STYLE_LABELS } from '../../domain/links';
+import { LIMITS, LINK_ICONS, LINK_STYLES, type Basics, type Link, type LinkStyle } from '../../domain/schema';
+import { ICONS } from '../../engine/icons';
+import { cn } from '../../lib/cn';
 import { createId } from '../../lib/id';
 import { move, useActions, useFieldError } from './context';
 import { TextField } from './fields';
 
-function LinkRow({ link, index, count }: { link: Basics['links'][number]; index: number; count: number }) {
+const STYLE_HINTS: Record<LinkStyle, string> = {
+  url: 'Shows each full address. The safest choice for strict ATS portals.',
+  text: 'Shows the label. The address stays clickable in the PDF, Word and web versions.',
+  'icon-text': 'Adds a matching icon before each label and contact detail. Links stay clickable.',
+  icon: 'Shows only the icon for links. Your email and phone always keep their text.',
+};
+
+/** A tiny rendering of how a link looks in each style. */
+function StyleSample({ link, style }: { link: Link; style: LinkStyle }) {
+  const text = linkText(link, style);
+  return (
+    <span className="flex h-6 max-w-full min-w-0 items-center gap-1 text-[12.5px] text-brand">
+      {(style === 'icon-text' || style === 'icon') && <LinkGlyph icon={linkIcon(link)} size={style === 'icon' ? 16 : 14} className="shrink-0" />}
+      {style !== 'icon' && <span className="truncate">{text}</span>}
+    </span>
+  );
+}
+
+function LinkStylePicker({ value, sample }: { value: LinkStyle; sample: Link }) {
+  const { update } = useActions();
+  const labelId = useId();
+  const hintId = useId();
+  const set = (v: LinkStyle) => update((d) => void (d.design.linkStyle = v));
+  const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    const next = LINK_STYLES[(LINK_STYLES.indexOf(value) + d + LINK_STYLES.length) % LINK_STYLES.length]!;
+    set(next);
+    requestAnimationFrame(() => e.currentTarget.querySelector<HTMLElement>(`[data-value="${next}"]`)?.focus());
+  };
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span id={labelId} className="text-[12.5px] text-muted">
+        Show links as
+      </span>
+      <div role="radiogroup" aria-labelledby={labelId} aria-describedby={hintId} onKeyDown={onKey} className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        {LINK_STYLES.map((style) => {
+          const active = style === value;
+          return (
+            <button
+              key={style}
+              id={active ? fieldId('basics', 'linkStyle') : undefined}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              tabIndex={active ? 0 : -1}
+              data-value={style}
+              onClick={() => set(style)}
+              className={cn(
+                'flex min-w-0 flex-col items-start gap-1 rounded-lg border px-2.5 py-2 text-left transition-colors',
+                active ? 'border-brand bg-brand-soft/60 ring-1 ring-brand' : 'border-line bg-surface hover:border-subtle',
+              )}
+            >
+              <StyleSample link={sample} style={style} />
+              <span className={cn('text-[12.5px]', active ? 'font-medium text-fg' : 'text-muted')}>{LINK_STYLE_LABELS[style]}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p id={hintId} aria-live="polite" className="text-[12.5px] text-subtle">
+        {STYLE_HINTS[value]}
+      </p>
+    </div>
+  );
+}
+
+function IconPicker({ link, name, onPick }: { link: Link; name: string; onPick: (icon: Link['icon']) => void }) {
+  const detected = detectLink(link.url, link.label).icon;
+  const current = linkIcon(link);
+  return (
+    <Menu
+      label={`Icon for ${name}`}
+      align="start"
+      items={[
+        {
+          label: `Automatic (${ICONS[detected].name})`,
+          icon: <LinkGlyph icon={detected} />,
+          checked: link.icon === 'auto',
+          onSelect: () => onPick('auto'),
+        },
+        ...LINK_ICONS.map((id, i) => ({
+          label: ICONS[id].name,
+          icon: <LinkGlyph icon={id} />,
+          checked: link.icon === id,
+          separatorBefore: i === 0,
+          onSelect: () => onPick(id),
+        })),
+      ]}
+      trigger={(props) => (
+        <button
+          type="button"
+          {...props}
+          aria-label={`Icon for ${name}: ${ICONS[current].name}${link.icon === 'auto' ? ', automatic' : ''}`}
+          title="Change icon"
+          className="inline-flex h-9 shrink-0 items-center gap-0.5 rounded-lg border border-line bg-surface pr-1 pl-2 text-brand transition-colors hover:border-subtle focus-visible:outline-2 focus-visible:outline-brand"
+        >
+          <LinkGlyph icon={current} size={16} />
+          <ChevronDownIcon size={12} className="text-subtle" />
+        </button>
+      )}
+    />
+  );
+}
+
+function LinkRow({ link, index, count, showIcon }: { link: Link; index: number; count: number; showIcon: boolean }) {
   const { update } = useActions();
   const urlId = fieldId('link', link.id, 'url');
   const error = useFieldError(urlId);
   const edit = (fn: (links: Basics['links']) => void, key?: string) => update((d) => fn(d.basics.links), key);
+  const auto = link.url.trim() ? linkText({ ...link, label: '' }, 'text') : '';
+  const name = link.label.trim() || auto || `link ${index + 1}`;
   return (
     <li className="flex flex-col gap-1">
-      <div className="flex items-center gap-2">
+      {/* Phones: icon, label and actions on one line, the address full-width below. */}
+      <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+        {showIcon && <IconPicker link={link} name={name} onPick={(icon) => edit((l) => void (l[index]!.icon = icon))} />}
         <Input
           aria-label={`Link ${index + 1} label`}
           list="link-label-suggestions"
           value={link.label}
           maxLength={40}
-          placeholder="LinkedIn"
+          placeholder={auto || 'Label'}
           onChange={(e) => edit((l) => void (l[index]!.label = e.target.value), `${link.id}.label`)}
-          className="w-28! shrink-0 sm:w-36!"
+          className="min-w-0 flex-1 sm:w-36! sm:flex-none"
         />
         <Input
           id={urlId}
@@ -33,9 +148,9 @@ function LinkRow({ link, index, count }: { link: Basics['links'][number]; index:
           inputMode="url"
           value={link.url}
           maxLength={LIMITS.shortText}
-          placeholder="linkedin.com/in/you"
+          placeholder="github.com/you"
           onChange={(e) => edit((l) => void (l[index]!.url = e.target.value), `${link.id}.url`)}
-          className="min-w-0 flex-1"
+          className="order-last min-w-0 basis-full sm:order-none sm:basis-0 sm:flex-1"
         />
         <div className="flex shrink-0">
           <IconButton size="sm" label="Move link up" disabled={index === 0} onClick={() => edit((l) => move(l, index, index - 1))} className="max-sm:hidden">
@@ -64,7 +179,9 @@ function LinkRow({ link, index, count }: { link: Basics['links'][number]; index:
   );
 }
 
-export function BasicsCard({ basics }: { basics: Basics }) {
+const SAMPLE_LINK: Link = { id: 'sample', label: '', url: 'github.com/you', icon: 'auto' };
+
+export function BasicsCard({ basics, linkStyle }: { basics: Basics; linkStyle: LinkStyle }) {
   const { update } = useActions();
   const set =
     <K extends Exclude<keyof Basics, 'links'>>(key: K) =>
@@ -135,14 +252,17 @@ export function BasicsCard({ basics }: { basics: Basics }) {
         <div className="flex flex-col gap-2 sm:col-span-2">
           <span className="text-[13px] font-medium">Links</span>
           {basics.links.length > 0 && (
-            <ul className="flex flex-col gap-2">
-              {basics.links.map((l, i) => (
-                <LinkRow key={l.id} link={l} index={i} count={basics.links.length} />
-              ))}
-            </ul>
+            <>
+              <LinkStylePicker value={linkStyle} sample={basics.links.find((l) => l.url.trim()) ?? SAMPLE_LINK} />
+              <ul className="flex flex-col gap-3.5 sm:gap-2">
+                {basics.links.map((l, i) => (
+                  <LinkRow key={l.id} link={l} index={i} count={basics.links.length} showIcon={linkStyle === 'icon-text' || linkStyle === 'icon'} />
+                ))}
+              </ul>
+            </>
           )}
           <datalist id="link-label-suggestions">
-            {['LinkedIn', 'GitHub', 'Portfolio', 'Website', 'GitLab', 'Dribbble', 'Behance'].map((s) => (
+            {['LinkedIn', 'GitHub', 'Portfolio', 'Website', 'Blog', 'Email', 'GitLab', 'Dribbble', 'Behance', 'Google Scholar'].map((s) => (
               <option key={s} value={s} />
             ))}
           </datalist>
@@ -151,7 +271,7 @@ export function BasicsCard({ basics }: { basics: Basics }) {
             disabled={basics.links.length >= LIMITS.links}
             onClick={() => {
               const id = createId('l_');
-              update((d) => void d.basics.links.push({ id, label: '', url: '' }));
+              update((d) => void d.basics.links.push({ id, label: '', url: '', icon: 'auto' }));
               requestAnimationFrame(() => document.getElementById(fieldId('link', id, 'url'))?.focus());
             }}
             className="inline-flex w-fit items-center gap-1.5 rounded-lg px-2 py-1 text-[13px] font-medium text-brand hover:bg-brand-soft disabled:opacity-50"

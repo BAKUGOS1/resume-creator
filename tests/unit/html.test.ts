@@ -19,7 +19,7 @@ describe('responsive web résumé', () => {
   it('escapes user content and never emits executable script or unsafe links', () => {
     const r = createSampleResume();
     r.basics.name = '<img src=x onerror=alert(1)>';
-    r.basics.links.push({ id: 'x', label: 'x', url: 'javascript:alert(1)' });
+    r.basics.links.push({ id: 'x', label: 'x', url: 'javascript:alert(1)', icon: 'auto' });
     r.basics.headline = '</script><script>alert(1)</script>';
     const html = buildResumeHtml(r);
     expect(html).not.toContain('<img src=x');

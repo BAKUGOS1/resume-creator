@@ -1,4 +1,5 @@
 /** Device-independent drawing primitives (PDF points, origin top-left, y = text baseline). */
+import type { LinkIcon } from '../domain/schema';
 import type { FaceId } from './fonts/registry';
 
 export interface TextOp {
@@ -49,7 +50,17 @@ export interface CircleOp {
   color: string;
 }
 
-export type DrawOp = TextOp | RectOp | LineOp | LinkOp | CircleOp;
+/** A contact icon (see icons.ts), drawn in a `size`-point square whose top-left is (x, y). */
+export interface IconOp {
+  type: 'icon';
+  icon: LinkIcon;
+  x: number;
+  y: number;
+  size: number;
+  color: string;
+}
+
+export type DrawOp = TextOp | RectOp | LineOp | LinkOp | CircleOp | IconOp;
 
 export interface PageSize {
   width: number;

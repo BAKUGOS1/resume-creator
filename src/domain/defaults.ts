@@ -69,6 +69,7 @@ export const createDesign = (overrides: Partial<Design> = {}): Design => ({
   spacing: 'normal',
   dateFormat: 'short',
   fitToPage: false,
+  linkStyle: 'icon-text',
   ...overrides,
 });
 

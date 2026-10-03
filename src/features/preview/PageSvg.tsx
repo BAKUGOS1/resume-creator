@@ -1,5 +1,7 @@
 import { memo } from 'react';
 import type { Page } from '../../engine';
+import { LinkGlyphShapes } from '../../components/ui/LinkGlyph';
+import { ICON_STROKE } from '../../engine/icons';
 import { cssFamily } from './fonts';
 
 export interface PageSvgProps {
@@ -45,6 +47,21 @@ export const PageSvg = memo(function PageSvg({ page, width = '100%', label, inte
             return <rect key={i} x={op.x} y={op.y} width={op.w} height={op.h} fill={op.color} />;
           case 'circle':
             return <circle key={i} cx={op.cx} cy={op.cy} r={op.r} fill={op.color} />;
+          case 'icon':
+            return (
+              <g
+                key={i}
+                transform={`translate(${op.x} ${op.y}) scale(${op.size / 24})`}
+                fill="none"
+                stroke={op.color}
+                strokeWidth={ICON_STROKE}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <LinkGlyphShapes icon={op.icon} />
+              </g>
+            );
           case 'line':
             return <line key={i} x1={op.x1} y1={op.y1} x2={op.x2} y2={op.y2} stroke={op.color} strokeWidth={op.width} />;
           case 'link':

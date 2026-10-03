@@ -2,8 +2,9 @@
 import type { jsPDF as JsPDF } from 'jspdf';
 import type { Resume } from '../../domain/schema';
 import type { FontSet } from '../fonts/loader';
+import { ICON_STROKE, ICONS, parsePath, roundedRectPath, type PathCommand } from '../icons';
 import { toBase64 } from '../fonts/loader';
-import type { LayoutResult } from '../types';
+import type { IconOp, LayoutResult } from '../types';
 
 export interface PdfMeta {
   title: string;
@@ -20,6 +21,25 @@ export function pdfMeta(resume: Resume): PdfMeta {
     .join(', ')
     .slice(0, 500);
   return { title: `${name} – Résumé`, author: name, subject: resume.basics.headline.trim(), keywords };
+}
+
+/** Strokes an icon as vector paths, then restores the default line style used by rules. */
+function drawIcon(doc: JsPDF, op: IconOp): void {
+  const k = op.size / 24;
+  const at = (cmds: PathCommand[]) => cmds.map((c) => ({ op: c.op, c: c.c.map((v, i) => (i % 2 ? op.y : op.x) + v * k) }));
+  doc.setDrawColor(op.color);
+  doc.setLineWidth(ICON_STROKE * k);
+  doc.setLineCap('round');
+  doc.setLineJoin('round');
+  for (const s of ICONS[op.icon].shapes) {
+    if ('circle' in s) doc.circle(op.x + s.circle[0] * k, op.y + s.circle[1] * k, s.circle[2] * k, 'S');
+    else {
+      doc.path(at('d' in s ? parsePath(s.d) : roundedRectPath(...s.rect)));
+      doc.stroke();
+    }
+  }
+  doc.setLineCap('butt');
+  doc.setLineJoin('miter');
 }
 
 export function renderPdf(JsPDFCtor: typeof JsPDF, layout: LayoutResult, fonts: FontSet, meta: PdfMeta): JsPDF {
@@ -51,6 +71,8 @@ export function renderPdf(JsPDFCtor: typeof JsPDF, layout: LayoutResult, fonts: 
       } else if (op.type === 'circle') {
         doc.setFillColor(op.color);
         doc.circle(op.cx, op.cy, op.r, 'F');
+      } else if (op.type === 'icon') {
+        drawIcon(doc, op);
       } else {
         doc.link(op.x, op.y, op.w, op.h, { url: op.url });
       }

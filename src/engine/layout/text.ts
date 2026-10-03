@@ -3,6 +3,7 @@
  * single-file engine (`flow`), generalised for any font and with hard breaks for
  * words longer than the line.
  */
+import type { LinkIcon } from '../../domain/schema';
 import type { FontSet } from '../fonts/loader';
 import { FACES, type FaceId } from '../fonts/registry';
 
@@ -23,7 +24,13 @@ export interface Run {
   link?: string | null;
   /** Interpret **bold** markers inside `text`. */
   rich?: boolean;
+  /** Draw this icon (one em wide) instead of text; it never breaks from the text after it. */
+  icon?: LinkIcon;
 }
+
+/** Advance of an inline icon, in ems; the glyph itself is ICON_BOX ems square. */
+export const ICON_ADVANCE = 1.02;
+export const ICON_BOX = 0.94;
 
 /** A measured, positioned piece of one line (x relative to the line start). */
 export interface Placed {
@@ -35,6 +42,7 @@ export interface Placed {
   color: string;
   cs: number;
   link: string | null;
+  icon?: LinkIcon;
 }
 
 export interface Line {
@@ -113,27 +121,44 @@ export class Measurer {
   }
 }
 
+interface TokenPart {
+  text: string;
+  style: TextStyle;
+  bold: boolean;
+  link: string | null;
+  width: number;
+  icon?: LinkIcon;
+}
+
 interface Token {
   space: boolean;
-  parts: { text: string; style: TextStyle; bold: boolean; link: string | null; width: number }[];
+  parts: TokenPart[];
   width: number;
+}
+
+/** Appends a non-space part, gluing it to a preceding non-space token. */
+function pushPart(tokens: Token[], part: TokenPart, space: boolean): void {
+  const last = tokens[tokens.length - 1];
+  if (!space && last && !last.space) {
+    last.parts.push(part);
+    last.width += part.width;
+  } else tokens.push({ space, parts: [part], width: part.width });
 }
 
 function tokenize(runs: Run[], m: Measurer): Token[] {
   const tokens: Token[] = [];
   for (const run of runs) {
+    if (run.icon) {
+      pushPart(tokens, { text: '', style: run.style, bold: false, link: run.link ?? null, width: run.style.size * ICON_ADVANCE, icon: run.icon }, false);
+      continue;
+    }
     const text = cleanText(run.style.upper ? run.text.toUpperCase() : run.text);
     const spans = run.rich ? parseInline(text) : [{ text, bold: false }];
     for (const span of spans) {
       for (const piece of span.text.split(/( +)/)) {
         if (!piece) continue;
         const part = { text: piece, style: run.style, bold: span.bold, link: run.link ?? null, width: m.width(piece, run.style, span.bold) };
-        const space = /^ +$/.test(piece);
-        const last = tokens[tokens.length - 1];
-        if (!space && last && !last.space) {
-          last.parts.push(part);
-          last.width += part.width;
-        } else tokens.push({ space, parts: [part], width: part.width });
+        pushPart(tokens, part, /^ +$/.test(piece));
       }
     }
   }
@@ -145,6 +170,15 @@ function hardBreak(token: Token, width: number, m: Measurer): Token[] {
   const out: Token[] = [];
   let cur: Token = { space: false, parts: [], width: 0 };
   for (const part of token.parts) {
+    if (part.icon) {
+      if (cur.width + part.width > width && cur.parts.length) {
+        out.push(cur);
+        cur = { space: false, parts: [], width: 0 };
+      }
+      cur.parts.push(part);
+      cur.width += part.width;
+      continue;
+    }
     for (const ch of part.text) {
       const w = m.width(ch, part.style, part.bold);
       if (cur.width + w > width && cur.parts.length) {
@@ -196,6 +230,11 @@ export function breakLines(runs: Run[], width: number, m: Measurer): Line[] {
     for (const part of tokensOnLine.flatMap((t) => t.parts)) {
       const face = part.bold ? (part.style.boldFace ?? part.style.face) : part.style.face;
       size = Math.max(size, part.style.size);
+      if (part.icon) {
+        pieces.push({ text: '', x, width: part.width, face, size: part.style.size, color: part.style.color, cs: 0, link: part.link, icon: part.icon });
+        x += part.width;
+        continue;
+      }
       for (const seg of m.segments(part.text, face)) {
         const w = m.faceWidth(seg.text, seg.face, part.style.size, part.style.cs ?? 0);
         const prev = pieces[pieces.length - 1];

@@ -109,7 +109,7 @@ describe('layout', () => {
     const exp = r.sections.find((s) => s.kind === 'experience');
     if (exp?.kind !== 'experience') throw new Error('fixture');
     exp.items[0]!.bullets.push(
-      ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) =>
+      ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((n) =>
         createBullet(`Additional accomplishment ${n} with enough words to wrap onto a second line in most templates.`),
       ),
     );
@@ -153,7 +153,7 @@ describe('layout', () => {
 
   it('only emits safe link targets', () => {
     const r = createSampleResume();
-    r.basics.links.push({ id: 'x', label: 'Evil', url: 'javascript:alert(1)' });
+    r.basics.links.push({ id: 'x', label: 'Evil', url: 'javascript:alert(1)', icon: 'auto' });
     const links = layoutResume(r, fonts).pages[0]!.ops.flatMap((o) => (o.type === 'link' ? [o.url] : []));
     expect(links.length).toBeGreaterThan(3);
     for (const u of links) expect(u).toMatch(/^(https:|mailto:|tel:)/);

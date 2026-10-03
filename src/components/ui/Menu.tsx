@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { CheckIcon } from './icons';
 
 export interface MenuItem {
   label: string;
@@ -10,6 +11,8 @@ export interface MenuItem {
   disabled?: boolean;
   hint?: string;
   separatorBefore?: boolean;
+  /** Makes the item a radio choice (menuitemradio) shown with a check mark. */
+  checked?: boolean;
 }
 
 export interface MenuProps {
@@ -60,7 +63,9 @@ export function Menu({ trigger, items, align = 'end', label }: MenuProps) {
 
   useEffect(() => {
     if (!open) return;
-    const first = listRef.current?.querySelector<HTMLElement>('[role="menuitem"]:not([disabled])');
+    // Start on the current choice in radio menus, otherwise on the first item.
+    const first =
+      listRef.current?.querySelector<HTMLElement>('[aria-checked="true"]') ?? listRef.current?.querySelector<HTMLElement>('[role^="menuitem"]:not([disabled])');
     first?.focus();
     const onDown = (e: PointerEvent) => {
       if (!listRef.current?.contains(e.target as Node) && !triggerRef.current?.contains(e.target as Node)) close(false);
@@ -80,7 +85,7 @@ export function Menu({ trigger, items, align = 'end', label }: MenuProps) {
   }, [open, close, place]);
 
   const onListKey = (e: KeyboardEvent) => {
-    const nodes = [...(listRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:not([disabled])') ?? [])];
+    const nodes = [...(listRef.current?.querySelectorAll<HTMLElement>('[role^="menuitem"]:not([disabled])') ?? [])];
     const i = nodes.indexOf(document.activeElement as HTMLElement);
     const go = (n: number) => nodes[(n + nodes.length) % nodes.length]?.focus();
     if (e.key === 'ArrowDown') go(i + 1);
@@ -117,14 +122,15 @@ export function Menu({ trigger, items, align = 'end', label }: MenuProps) {
             aria-label={label}
             onKeyDown={onListKey}
             style={{ position: 'fixed', top: pos?.top ?? -9999, left: pos?.left ?? -9999 }}
-            className="z-50 min-w-[200px] rounded-xl border border-line bg-surface p-1 text-fg shadow-xl"
+            className="z-50 max-h-[min(70vh,28rem)] min-w-[200px] overflow-y-auto rounded-xl border border-line bg-surface p-1 text-fg shadow-xl"
           >
             {list.map((item, i) => (
               <div key={i}>
                 {item.separatorBefore && <div role="separator" className="my-1 h-px bg-line" />}
                 <button
                   type="button"
-                  role="menuitem"
+                  role={item.checked === undefined ? 'menuitem' : 'menuitemradio'}
+                  aria-checked={item.checked}
                   disabled={item.disabled}
                   onClick={() => {
                     close();
@@ -138,6 +144,7 @@ export function Menu({ trigger, items, align = 'end', label }: MenuProps) {
                   {item.icon && <span className={cn('shrink-0', !item.danger && 'text-muted')}>{item.icon}</span>}
                   <span className="flex-1">{item.label}</span>
                   {item.hint && <kbd className="font-sans text-[11.5px] text-subtle">{item.hint}</kbd>}
+                  {item.checked && <CheckIcon size={15} className="shrink-0 text-brand" />}
                 </button>
               </div>
             ))}

@@ -4,7 +4,7 @@
  * keep-with-next flags so headings never end a page alone.
  */
 import type { DrawOp } from '../types';
-import { breakLines, type Line, type Measurer, type Run, type TextStyle } from './text';
+import { breakLines, ICON_BOX, type Line, type Measurer, type Run, type TextStyle } from './text';
 
 export interface Block {
   height: number;
@@ -68,6 +68,13 @@ export class Composer {
   lineOps(line: Line, x: number, baseline: number): DrawOp[] {
     const ops: DrawOp[] = [];
     for (const p of line.pieces) {
+      if (p.icon) {
+        const box = p.size * ICON_BOX;
+        // Centred on the cap-height midline so it sits level with the text beside it.
+        ops.push({ type: 'icon', icon: p.icon, x: x + p.x, y: baseline - p.size * 0.355 - box / 2, size: box, color: p.color });
+        if (p.link) ops.push({ type: 'link', url: p.link, x: x + p.x, y: baseline - p.size * 0.82, w: p.width, h: p.size * 1.08 });
+        continue;
+      }
       if (!p.text.trim() && !p.link) continue;
       ops.push({ type: 'text', text: p.text, x: x + p.x, y: baseline, face: p.face, size: p.size, color: p.color, cs: p.cs });
       if (p.link) ops.push({ type: 'link', url: p.link, x: x + p.x, y: baseline - p.size * 0.82, w: p.width - p.cs, h: p.size * 1.08 });

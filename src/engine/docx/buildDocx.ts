@@ -5,6 +5,7 @@
  */
 import type JSZipType from 'jszip';
 import { formatDateRange, formatPartialDate } from '../../domain/dates';
+import { linkText } from '../../domain/links';
 import type { Resume, Section } from '../../domain/schema';
 import { displayUrl, safeHref } from '../../lib/url';
 import { accentOf, templateOf } from '../index';
@@ -100,7 +101,8 @@ export function buildDocxParts(resume: Resume): Record<string, string> {
     run(b.location.trim()),
     run(b.phone.trim()),
     b.email.trim() ? link(b.email.trim(), b.email.trim()) : '',
-    ...b.links.filter((l) => l.url.trim()).map((l) => link(l.url, displayUrl(l.url))),
+    // Word has no icon slots that ATS parsers handle well, so icon styles show the label (still a hyperlink).
+    ...b.links.filter((l) => l.url.trim()).map((l) => link(l.url, linkText(l, resume.design.linkStyle === 'url' ? 'url' : 'text'))),
   ];
   if (contact.some(Boolean)) body.push(p(sep(contact), { center: theme.center }));
 
