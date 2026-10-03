@@ -78,6 +78,22 @@ export const ICONS: Record<LinkIcon, { name: string; shapes: IconShape[] }> = {
       { d: 'M18 14 L18 19 C18 20.1 17.1 21 16 21 L5 21 C3.9 21 3 20.1 3 19 L3 8 C3 6.9 3.9 6 5 6 L10 6' },
     ],
   },
+  star: { name: 'Star', shapes: [{ d: 'M12 2.5 L14.9 8.6 L21.5 9.3 L16.6 13.8 L18 20.4 L12 17 L6 20.4 L7.4 13.8 L2.5 9.3 L9.1 8.6 Z' }] },
+  calendar: {
+    name: 'Calendar',
+    shapes: [{ rect: [3, 4.5, 18, 16.5, 2] }, { d: 'M3 9.5 L21 9.5' }, { d: 'M8 2.5 L8 6.5' }, { d: 'M16 2.5 L16 6.5' }],
+  },
+  mic: {
+    name: 'Podcast',
+    shapes: [{ rect: [9, 2, 6, 12, 3] }, { d: 'M5 11 C5 14.9 8.1 18 12 18 C15.9 18 19 14.9 19 11' }, { d: 'M12 18 L12 22' }],
+  },
+  camera: {
+    name: 'Camera',
+    shapes: [
+      { d: 'M3 8 C3 6.9 3.9 6 5 6 L7.5 6 L9 3.5 L15 3.5 L16.5 6 L19 6 C20.1 6 21 6.9 21 8 L21 18 C21 19.1 20.1 20 19 20 L5 20 C3.9 20 3 19.1 3 18 Z' },
+      { circle: [12, 12.5, 3.5] },
+    ],
+  },
 };
 
 /** Fixed-icon glyphs for the contact fields that aren't links. */

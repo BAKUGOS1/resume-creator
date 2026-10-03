@@ -4,7 +4,7 @@
  * search engines. No scripts, so it is safe to host anywhere or open offline.
  */
 import { formatDateRange, formatPartialDate, parsePartialDate, type DateFormat } from '../../domain/dates';
-import { linkIcon, linkText } from '../../domain/links';
+import { linkIcon, linkImage, linkText } from '../../domain/links';
 import type { LinkIcon, Resume, Section } from '../../domain/schema';
 import { displayUrl, safeHref } from '../../lib/url';
 import { FACES, type FaceId } from '../fonts/registry';
@@ -331,6 +331,10 @@ export function buildResumeHtml(resume: Resume, opts: HtmlOptions = {}): string 
   const style = resume.design.linkStyle;
   const withIcons = style === 'icon-text' || style === 'icon';
   const ico = (icon: LinkIcon) => (withIcons ? iconSvg(icon) : '');
+  const linkIcon2 = (l: (typeof b.links)[number]) => {
+    const img = linkImage(l);
+    return img ? `<img class="cv-icon" src="${esc(img)}" alt="" width="16" height="16">` : iconSvg(linkIcon(l));
+  };
   const contact: string[] = [];
   if (b.location.trim()) contact.push(`<li>${ico(FIELD_ICONS.location)}<span>${esc(b.location)}</span></li>`);
   if (b.phone.trim()) contact.push(`<li><a href="tel:${esc(b.phone.replace(/[^\d+]/g, ''))}">${ico(FIELD_ICONS.phone)}<span>${esc(b.phone)}</span></a></li>`);
@@ -346,9 +350,9 @@ export function buildResumeHtml(resume: Resume, opts: HtmlOptions = {}): string 
     if (!href) contact.push(`<li>${esc(text)}</li>`);
     else if (style === 'icon')
       contact.push(
-        `<li><a class="cv-icon-only" href="${esc(href)}" rel="noopener noreferrer" aria-label="${esc(text)}" title="${esc(text)}">${iconSvg(linkIcon(l))}</a></li>`,
+        `<li><a class="cv-icon-only" href="${esc(href)}" rel="noopener noreferrer" aria-label="${esc(text)}" title="${esc(text)}">${linkIcon2(l)}</a></li>`,
       );
-    else contact.push(`<li><a href="${esc(href)}" rel="noopener noreferrer">${ico(linkIcon(l))}<span>${esc(text)}</span></a></li>`);
+    else contact.push(`<li><a href="${esc(href)}" rel="noopener noreferrer">${withIcons ? linkIcon2(l) : ''}<span>${esc(text)}</span></a></li>`);
   }
 
   const headline = [

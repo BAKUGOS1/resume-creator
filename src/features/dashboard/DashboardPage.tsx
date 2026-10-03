@@ -3,7 +3,18 @@ import { navigate, paths } from '../../app/router';
 import { Button, IconButton } from '../../components/ui/Button';
 import { Dialog } from '../../components/ui/Dialog';
 import { Input } from '../../components/ui/Field';
-import { FilePlus2Icon, HardDriveIcon, MonitorIcon, MoonIcon, PlusIcon, ShieldCheckIcon, SparklesIcon, SunIcon, UploadIcon } from '../../components/ui/icons';
+import {
+  ChevronLeftIcon,
+  FilePlus2Icon,
+  HardDriveIcon,
+  MonitorIcon,
+  MoonIcon,
+  PlusIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  SunIcon,
+  UploadIcon,
+} from '../../components/ui/icons';
 import { Menu } from '../../components/ui/Menu';
 import { Logo } from '../../components/ui/misc';
 import { createBlankResume } from '../../domain/defaults';
@@ -116,6 +127,9 @@ export function DashboardPage() {
             <Logo className="text-[15px]" />
           </a>
           <div className="ml-auto flex items-center gap-1.5">
+            <a href="/" className="inline-flex h-9 items-center gap-1 rounded-lg px-2.5 text-[13.5px] font-medium text-muted hover:bg-surface-2 hover:text-fg">
+              <ChevronLeftIcon size={15} /> Website
+            </a>
             <ThemeMenu />
             <Button variant="ghost" icon={<UploadIcon />} onClick={importer.open} className="max-sm:hidden">
               Import

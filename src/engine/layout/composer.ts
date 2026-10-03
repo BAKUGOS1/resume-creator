@@ -71,7 +71,15 @@ export class Composer {
       if (p.icon) {
         const box = p.size * ICON_BOX;
         // Centred on the cap-height midline so it sits level with the text beside it.
-        ops.push({ type: 'icon', icon: p.icon, x: x + p.x, y: baseline - p.size * 0.355 - box / 2, size: box, color: p.color });
+        ops.push({
+          type: 'icon',
+          icon: p.icon,
+          x: x + p.x,
+          y: baseline - p.size * 0.355 - box / 2,
+          size: box,
+          color: p.color,
+          ...(p.image ? { src: p.image } : {}),
+        });
         if (p.link) ops.push({ type: 'link', url: p.link, x: x + p.x, y: baseline - p.size * 0.82, w: p.width, h: p.size * 1.08 });
         continue;
       }

@@ -42,6 +42,9 @@ const SITES: [RegExp, string, LinkIcon][] = [
   [/(^|\.)orcid\.org$/, 'ORCID', 'book'],
   [/(^|\.)researchgate\.net$/, 'ResearchGate', 'book'],
   [/(^|\.)arxiv\.org$/, 'arXiv', 'book'],
+  [/(^|\.)calendly\.com$/, 'Calendly', 'calendar'],
+  [/(^|\.)(open\.spotify\.com|podcasts\.apple\.com)$/, 'Podcast', 'mic'],
+  [/(^|\.)(unsplash\.com|500px\.com|flickr\.com)$/, 'Photography', 'camera'],
 ];
 
 /** Words in a label that say more than the address does ("Portfolio", "Blog"). */
@@ -76,8 +79,11 @@ export function detectLink(url: string, label = ''): LinkKind {
 
 /** The icon actually drawn: the user's choice, or the detected one. */
 export function linkIcon(link: Link): LinkIcon {
-  return link.icon === 'auto' ? detectLink(link.url, link.label).icon : link.icon;
+  return link.icon === 'auto' || link.icon === 'custom' ? detectLink(link.url, link.label).icon : link.icon;
 }
+
+/** The uploaded icon, when the link uses one. */
+export const linkImage = (link: Link): string | undefined => (link.icon === 'custom' ? link.iconImage : undefined);
 
 /** The text shown for a link in a given style. */
 export function linkText(link: Link, style: LinkStyle): string {

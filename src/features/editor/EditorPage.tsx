@@ -182,7 +182,7 @@ export function EditorPage({ resume }: { resume: Resume }) {
             <div className="shrink-0 border-b border-line bg-surface px-3 py-2">
               <Tabs idPrefix="editor" tabs={tabs} value={panel} onChange={setPanel} />
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4 pb-24 sm:px-4 lg:pb-8" {...tabPanelProps('editor', panel)}>
+            <div className="relative min-h-0 flex-1 overflow-y-auto px-3 py-4 pb-24 sm:px-4 lg:pb-8" {...tabPanelProps('editor', panel)}>
               {panel === 'content' && <ContentPanel resume={resume} />}
               {panel === 'design' && <DesignPanel resume={resume} layout={layout} />}
               {panel === 'check' && <ChecksPanel issues={issues} onJump={() => setPanel('content')} />}

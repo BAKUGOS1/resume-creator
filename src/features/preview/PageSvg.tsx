@@ -48,6 +48,7 @@ export const PageSvg = memo(function PageSvg({ page, width = '100%', label, inte
           case 'circle':
             return <circle key={i} cx={op.cx} cy={op.cy} r={op.r} fill={op.color} />;
           case 'icon':
+            if (op.src) return <image key={i} href={op.src} x={op.x} y={op.y} width={op.size} height={op.size} preserveAspectRatio="xMidYMid meet" />;
             return (
               <g
                 key={i}

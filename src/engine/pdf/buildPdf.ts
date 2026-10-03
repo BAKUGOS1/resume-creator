@@ -25,6 +25,14 @@ export function pdfMeta(resume: Resume): PdfMeta {
 
 /** Strokes an icon as vector paths, then restores the default line style used by rules. */
 function drawIcon(doc: JsPDF, op: IconOp): void {
+  if (op.src) {
+    try {
+      doc.addImage(op.src, 'PNG', op.x, op.y, op.size, op.size);
+      return;
+    } catch {
+      /* unreadable image: fall back to the glyph */
+    }
+  }
   const k = op.size / 24;
   const at = (cmds: PathCommand[]) => cmds.map((c) => ({ op: c.op, c: c.c.map((v, i) => (i % 2 ? op.y : op.x) + v * k) }));
   doc.setDrawColor(op.color);

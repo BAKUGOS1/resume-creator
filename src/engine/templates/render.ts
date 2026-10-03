@@ -4,7 +4,7 @@
  * text, standard headings) and makes new templates cheap to add.
  */
 import { formatDateRange, formatPartialDate, type DateFormat } from '../../domain/dates';
-import { linkIcon, linkText } from '../../domain/links';
+import { linkIcon, linkImage, linkText } from '../../domain/links';
 import type { LinkIcon, Resume, Section } from '../../domain/schema';
 import { displayUrl, safeHref } from '../../lib/url';
 import { FIELD_ICONS } from '../icons';
@@ -112,17 +112,17 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
   const withIcons = linkStyle === 'icon-text' || linkStyle === 'icon';
   const cIcon = { ...cStyle, color: pal.accent };
   /** `iconOnly` drops the text (links only: contact details always stay readable). */
-  const pushContact = (text: string, href: string | null, icon?: LinkIcon, iconOnly = false) => {
+  const pushContact = (text: string, href: string | null, icon?: LinkIcon, iconOnly = false, image?: string) => {
     if (!text.trim()) return;
     // Icons separate items on their own, so icon styles use a plain gap instead of the template's separator.
     if (contact.length) contact.push(withIcons ? { text: '    ', style: cSep } : { text: glue(H.separator), style: cSep });
-    if (withIcons && icon) contact.push({ text: '', icon, style: cIcon, link: href });
+    if (withIcons && icon) contact.push({ text: '', icon, image, style: cIcon, link: href });
     if (!(withIcons && icon && iconOnly)) contact.push({ text: (withIcons && icon ? '\u00A0' : '') + text.trim(), style: href ? cLink : cStyle, link: href });
   };
   pushContact(resume.basics.location, null, FIELD_ICONS.location);
   pushContact(resume.basics.phone, resume.basics.phone.trim() ? `tel:${resume.basics.phone.replace(/[^\d+]/g, '')}` : null, FIELD_ICONS.phone);
   pushContact(resume.basics.email, safeHref(resume.basics.email), FIELD_ICONS.email);
-  for (const l of resume.basics.links) if (l.url.trim()) pushContact(linkText(l, linkStyle), safeHref(l.url), linkIcon(l), linkStyle === 'icon');
+  for (const l of resume.basics.links) if (l.url.trim()) pushContact(linkText(l, linkStyle), safeHref(l.url), linkIcon(l), linkStyle === 'icon', linkImage(l));
   if (contact.length) {
     c.space(g(4));
     c.paragraph(contact, { lineHeight: H.contactSize * s * 1.45, align: center ? 'center' : 'left' });

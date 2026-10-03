@@ -154,9 +154,21 @@ export const LINK_ICONS = [
   'play',
   'book',
   'external',
+  'star',
+  'calendar',
+  'mic',
+  'camera',
 ] as const;
 export const LinkIconSchema = z.enum(LINK_ICONS);
-export const LinkSchema = z.object({ id, label: short, url: short, icon: z.union([LinkIconSchema, z.literal('auto')]) });
+/** Uploaded icon: a small PNG data URL (re-encoded in the browser, so never raw SVG). */
+export const ICON_IMAGE_RE = /^data:image\/png;base64,[A-Za-z0-9+/=]+$/;
+export const LinkSchema = z.object({
+  id,
+  label: short,
+  url: short,
+  icon: z.union([LinkIconSchema, z.literal('auto'), z.literal('custom')]),
+  iconImage: z.optional(z.string().check(z.maxLength(60_000), z.regex(ICON_IMAGE_RE))),
+});
 
 /** How contact links appear: the full address, a label, a label with an icon, or the icon alone. */
 export const LINK_STYLES = ['url', 'text', 'icon-text', 'icon'] as const;

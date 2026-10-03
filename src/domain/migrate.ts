@@ -8,6 +8,7 @@ import { isValidEmail, isValidPhone, safeHref } from '../lib/url';
 import { parseLooseRange } from './dates';
 import { createBasics, createBlankResume, createBullet, createDesign, createItem, createSection, SECTION_META } from './defaults';
 import {
+  ICON_IMAGE_RE,
   LIMITS,
   LINK_ICONS,
   LINK_STYLES,
@@ -15,6 +16,7 @@ import {
   SCHEMA_VERSION,
   TEMPLATE_IDS,
   type Bullet,
+  type Link,
   type LinkIcon,
   type LinkStyle,
   type Resume,
@@ -131,12 +133,12 @@ export function coerceResume(raw: Obj): unknown {
       links: arr(basics.links)
         .slice(0, LIMITS.links)
         .filter(isObj)
-        .map((l) => ({
-          id: uniqueId(seen, l.id, 'l_'),
-          label: str(l.label),
-          url: str(l.url),
-          icon: (LINK_ICONS as readonly unknown[]).includes(l.icon) ? (l.icon as LinkIcon) : 'auto',
-        })),
+        .map((l) => {
+          const image = typeof l.iconImage === 'string' && l.iconImage.length <= 60_000 && ICON_IMAGE_RE.test(l.iconImage) ? l.iconImage : undefined;
+          const icon: Link['icon'] =
+            l.icon === 'custom' && image ? 'custom' : (LINK_ICONS as readonly unknown[]).includes(l.icon) ? (l.icon as LinkIcon) : 'auto';
+          return { id: uniqueId(seen, l.id, 'l_'), label: str(l.label), url: str(l.url), icon, ...(image ? { iconImage: image } : {}) };
+        }),
     },
     sections,
   };

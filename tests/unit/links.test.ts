@@ -172,3 +172,23 @@ describe('data model', () => {
     expect(checkResume(styled('icon')).find((i) => i.id === 'links-hidden')?.severity).toBe('warning');
   });
 });
+
+describe('uploaded icons', () => {
+  const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  it('draws the uploaded PNG in the layout and PDF', () => {
+    const r = styled('icon-text');
+    Object.assign(r.basics.links[1]!, { icon: 'custom', iconImage: png });
+    const icon = ops(r).find((o) => o.type === 'icon' && o.src);
+    expect(icon).toBeTruthy();
+    const pdf = Buffer.from(renderPdf(jsPDF, layoutResume(r, fonts), fonts, pdfMeta(r)).output('arraybuffer')).toString('latin1');
+    expect(pdf).toContain('/Subtype /Image');
+    expect(buildResumeHtml(r)).toContain(`<img class="cv-icon" src="${png}"`);
+  });
+  it('rejects anything but a PNG data URL', () => {
+    const r = createSampleResume() as unknown as { basics: { links: Record<string, unknown>[] } };
+    Object.assign(r.basics.links[0]!, { icon: 'custom', iconImage: 'data:image/svg+xml,<svg onload=alert(1)>' });
+    const out = ResumeSchema.parse(coerceResume(r));
+    expect(out.basics.links[0]!.icon).toBe('auto');
+    expect(out.basics.links[0]!.iconImage).toBeUndefined();
+  });
+});

@@ -58,6 +58,8 @@ export interface IconOp {
   y: number;
   size: number;
   color: string;
+  /** Uploaded PNG drawn instead of the glyph. */
+  src?: string;
 }
 
 export type DrawOp = TextOp | RectOp | LineOp | LinkOp | CircleOp | IconOp;

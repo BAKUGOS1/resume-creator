@@ -26,6 +26,8 @@ export interface Run {
   rich?: boolean;
   /** Draw this icon (one em wide) instead of text; it never breaks from the text after it. */
   icon?: LinkIcon;
+  /** Uploaded PNG shown in place of `icon`. */
+  image?: string;
 }
 
 /** Advance of an inline icon, in ems; the glyph itself is ICON_BOX ems square. */
@@ -43,6 +45,7 @@ export interface Placed {
   cs: number;
   link: string | null;
   icon?: LinkIcon;
+  image?: string;
 }
 
 export interface Line {
@@ -128,6 +131,7 @@ interface TokenPart {
   link: string | null;
   width: number;
   icon?: LinkIcon;
+  image?: string;
 }
 
 interface Token {
@@ -149,7 +153,11 @@ function tokenize(runs: Run[], m: Measurer): Token[] {
   const tokens: Token[] = [];
   for (const run of runs) {
     if (run.icon) {
-      pushPart(tokens, { text: '', style: run.style, bold: false, link: run.link ?? null, width: run.style.size * ICON_ADVANCE, icon: run.icon }, false);
+      pushPart(
+        tokens,
+        { text: '', style: run.style, bold: false, link: run.link ?? null, width: run.style.size * ICON_ADVANCE, icon: run.icon, image: run.image },
+        false,
+      );
       continue;
     }
     const text = cleanText(run.style.upper ? run.text.toUpperCase() : run.text);
@@ -231,7 +239,18 @@ export function breakLines(runs: Run[], width: number, m: Measurer): Line[] {
       const face = part.bold ? (part.style.boldFace ?? part.style.face) : part.style.face;
       size = Math.max(size, part.style.size);
       if (part.icon) {
-        pieces.push({ text: '', x, width: part.width, face, size: part.style.size, color: part.style.color, cs: 0, link: part.link, icon: part.icon });
+        pieces.push({
+          text: '',
+          x,
+          width: part.width,
+          face,
+          size: part.style.size,
+          color: part.style.color,
+          cs: 0,
+          link: part.link,
+          icon: part.icon,
+          image: part.image,
+        });
         x += part.width;
         continue;
       }
