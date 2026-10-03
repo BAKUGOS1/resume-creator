@@ -1,0 +1,21 @@
+{
+  "name": "ats-resume-creator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production single-page ATS-optimized resume builder with vector jsPDF engine and Word export.",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve .",
+    "build": "echo 'Static build ready'"
+  },
+  "keywords": [
+    "resume",
+    "cv",
+    "ats-friendly",
+    "jspdf",
+    "vector-pdf",
+    "career"
+  ],
+  "author": "Mohit Kumar <mohit.bakugo@gmail.com>",
+  "license": "MIT"
+}

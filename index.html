@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mohit Kumar — Resume</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+if (!window.jspdf) {
+  document.write('<script src="./jspdf.umd.min.js"><\/script>');
+}
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#eceef2}
+body{font-family:Helvetica,Arial,sans-serif;color:#141414;padding:20px 12px 50px}
+.bar{max-width:794px;margin:0 auto 12px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.bar-info{flex:1 1 280px}
+.bar p{font-size:13px;color:#3a3f47;line-height:1.45}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:#1d3557;color:#fff;letter-spacing:.3px;margin-left:6px;vertical-align:middle}
+.badge.fit{background:#0d7a57}
+.badge.warn{background:#b45309}
+.badge.overflow{background:#b91c1c}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:600 13px Helvetica,Arial,sans-serif;padding:9px 15px;border-radius:8px;border:1px solid #1d3557;background:#1d3557;color:#fff;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(29,53,87,.25)}
+button:active{transform:translateY(0)}
+button.ghost{background:#fff;color:#1d3557}
+button.ghost:hover{background:#f8f9fa}
+#status{max-width:794px;margin:0 auto 10px;font-size:12.5px;color:#1d3557;min-height:16px;font-family:ui-monospace,Menlo,monospace}
+
+.stage{margin:0 auto;position:relative}
+.page{width:210mm;min-height:297mm;background:#fff;padding:12.5mm 14mm;box-shadow:0 6px 28px rgba(0,0,0,.12);transform-origin:top left;position:absolute;top:0;left:0}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+.name{font-size:20pt;font-weight:700;line-height:1.2;color:#141414}
+.title{font-size:11pt;color:#1d3557;font-weight:700;margin-top:2pt}
+.contact{font-size:8.8pt;color:#3c3c3c;margin-top:4pt;line-height:1.45}
+h2{font-size:10.5pt;font-weight:700;color:#1d3557;border-bottom:.8pt solid #c8ccd2;padding-bottom:2pt;margin:8.5pt 0 4pt;letter-spacing:.2pt}
+.body{font-size:9.4pt;line-height:1.34}
+.row{display:flex;justify-content:space-between;gap:12pt;font-size:9.4pt;line-height:1.34;margin-top:5pt}
+.row.first{margin-top:0}
+.date{white-space:nowrap;color:#3c3c3c}
+.stack{font-size:8.8pt;color:#555;font-style:italic;line-height:1.3}
+ul{padding-left:12pt;margin-top:1.5pt}
+li{font-size:9.4pt;line-height:1.34;margin-bottom:.8pt}
+li::marker{color:#555}
+.skill{font-size:9.4pt;line-height:1.34;margin-bottom:1pt}
+
+/* Edit Drawer */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);z-index:90;display:none}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:min(580px,94vw);background:#ffffff;border-left:1px solid #c8ccd2;z-index:100;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:-8px 0 24px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .2s ease}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;justify-content:space-between;align-items:center}
+.drawer-header h3{font-size:16px;color:#1d3557}
+.drawer-body{flex:1;overflow:hidden}
+.drawer-body textarea{width:100%;height:100%;background:#f8f9fa;color:#141414;font-family:ui-monospace,Menlo,monospace;font-size:12px;padding:12px;border:1px solid #c8ccd2;border-radius:6px;resize:none;line-height:1.45}
+.drawer-footer{display:flex;gap:10px;justify-content:flex-end}
+
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff;padding:0}
+  .bar,#status,.drawer,.drawer-backdrop{display:none!important}
+  .stage{width:auto!important;height:auto!important}
+  .page{position:static;transform:none!important;box-shadow:none;page-break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="bar-info">
+    <p>One-page, ATS-friendly resume: single column, standard headings, real selectable text. <span id="budgetBadge" class="badge fit">A4 Fit: 96%</span></p>
+  </div>
+  <div class="btns">
+    <button id="editBtn" class="ghost">Edit Data</button>
+    <button id="pdfBtn">Download PDF</button>
+    <button id="docBtn" class="ghost">Word</button>
+    <button id="printBtn" class="ghost">Print</button>
+  </div>
+</div>
+<div id="status"></div>
+<div class="stage" id="stage"><div class="page" id="page"></div></div>
+
+<!-- Drawer for Tailoring JSON -->
+<div class="drawer-backdrop" id="backdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h3>Edit Resume Data (JSON)</h3>
+    <button id="closeDrawer" class="ghost" style="padding:4px 10px">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <textarea id="jsonEditor" spellcheck="false"></textarea>
+  </div>
+  <div class="drawer-footer">
+    <button id="resetDataBtn" class="ghost">Reset Defaults</button>
+    <button id="applyDataBtn">Apply Changes</button>
+  </div>
+</div>
+
+<script>
+const DEFAULT_DATA = {
+  name: "Mohit Kumar",
+  title: "Full-Stack Product Engineer",
+  contact: [
+    [{t:"Ahmedabad, India"},{t:"+91 91730 86652"},{t:"mohit.bakugo@gmail.com",u:"mailto:mohit.bakugo@gmail.com"}],
+    [{t:"linkedin.com/in/mohitanimator9898",u:"https://www.linkedin.com/in/mohitanimator9898/"},{t:"github.com/BAKUGOS1",u:"https://github.com/BAKUGOS1"},{t:"mohitstack.vercel.app",u:"https://mohitstack.vercel.app"}]
+  ],
+  summary: "Full-stack product engineer who designs, builds and ships web and mobile products end to end: interface, API, database and automated tests. Three years in accounts operations bring a practical understanding of the business workflows that software must support.",
+  experience: [
+    {role:"Software Engineer, Product & Support", org:"Zybra Accounting Software", date:"Nov 2025 – Present", bullets:[
+      "Rebuilt the company website in Next.js, matching the live site one to one.",
+      "Added a release gate: every build must pass lint, unit tests, Playwright end-to-end tests and a production build.",
+      "Diagnose and resolve customer issues in the company's accounting software."]},
+    {role:"Accounts and Office Operations", org:"", date:"Oct 2022 – Oct 2025", bullets:[
+      "Managed accounting, cashiering and bank reconciliation for high-volume stores across multiple companies.",
+      "Maintained records on ERP and POS systems and trained new staff to use them."]}
+  ],
+  projects: [
+    {name:"Phere", url:"https://app.wrkly.in", desc:"Wedding finance app · Web, Android, iOS", date:"May 2026 – Present", stack:"React, Supabase, PostgreSQL, Capacitor", bullets:[
+      "Designed, built and shipped solo; live in production with active users, now at v3.0.0.",
+      "Unified wedding budgets, expenses, vendors, guests, RSVPs and e-invites in one secure workspace.",
+      "Secured data with Supabase Auth, roles and row-level security; added OCR and AI through Edge Functions.",
+      "Built an encrypted offline outbox that syncs changes safely on reconnect."]},
+    {name:"QaAgent-Pro", url:"https://github.com/BAKUGOS1/QaAgent-Pro", desc:"Open-source QA agent", date:"Jun 2026", stack:"TypeScript, Playwright, Node.js", bullets:[
+      "Tests a custom enterprise CRM the way a human QA engineer would, across 56 deterministic scenarios.",
+      "Splits the work across five roles: planner, risk analyst, executor, defect verifier and release judge.",
+      "Writes only to verified staging, then delivers a go or no-go Excel report with evidence."]},
+    {name:"Taazu", url:"https://taazu.vercel.app", desc:"Operations CRM · Client project", date:"Sep 2026 – Present", stack:"TypeScript, React, Next.js, Supabase", bullets:[
+      "Built a custom CRM for a business owner running a drink-brand pilot in Ahmedabad.",
+      "Brings live KPIs, supplier and buyer directories, budget tracking and a city map into one place.",
+      "Added a spreadsheet importer with column matching, deduplication and undo."]}
+  ],
+  also: [
+    {name:"BeforeCode", url:"https://github.com/BAKUGOS1/beforecode", desc:"npm CLI for AI coding agents"},
+    {name:"CanvaSync", url:"https://github.com/BAKUGOS1/canvasync", desc:"real-time collaborative canvas"},
+    {name:"CaseSheet", url:"https://github.com/BAKUGOS1/casesheet", desc:"Smart India Hackathon project"}
+  ],
+  skills: [
+    ["Languages","TypeScript, JavaScript, Go, Python, SQL"],
+    ["Frontend","React, Next.js, Vite, Tailwind CSS, shadcn/ui, Capacitor, PWA"],
+    ["Backend","Node.js, Supabase Edge Functions, REST, gRPC, Django"],
+    ["Data","PostgreSQL, Supabase, Prisma, Drizzle, row-level security"],
+    ["Testing and CI","Playwright, Vitest, axe accessibility testing, risk-based testing, GitHub Actions"],
+    ["AI tooling","Claude Code, Codex, agent workflows, OCR pipelines"],
+    ["Domain","Accounting, reconciliation, ERP, POS"],
+    ["Spoken","English, Hindi, Gujarati"]
+  ],
+  education: [
+    {deg:"BCA (Bachelor of Computer Applications)", org:"Monark University", date:"2022 – 2026"},
+    {deg:"Higher Secondary, Commerce", org:"Om Shanti Higher Secondary", date:"2022"}
+  ]
+};
+
+let R = JSON.parse(localStorage.getItem("mohit_resume_classic_data") || JSON.stringify(DEFAULT_DATA));
+
+const esc = s => String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const status = m => { document.getElementById("status").textContent = m; };
+
+/* ---------- On-screen preview ---------- */
+function previewHTML(){
+  const L = (t,u) => u ? `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>` : esc(t);
+  const row = (left,date,first) => `<div class="row${first?" first":""}"><span>${left}</span><span class="date">${esc(date)}</span></div>`;
+  const ul = list => `<ul>${list.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
+  let h = `<div class="name">${esc(R.name)}</div><div class="title">${esc(R.title)}</div>`;
+  h += `<div class="contact">${R.contact.map(l=>l.map(c=>L(c.t,c.u)).join(" · ")).join("<br>")}</div>`;
+  h += `<h2>SUMMARY</h2><p class="body">${esc(R.summary)}</p>`;
+  h += `<h2>EXPERIENCE</h2>` + R.experience.map((e,i)=>row(`<b>${esc(e.role)}</b>${e.org?" — "+esc(e.org):""}`,e.date,!i)+ul(e.bullets)).join("");
+  h += `<h2>PROJECTS</h2>` + R.projects.map((p,i)=>row(`<b>${L(p.name,p.url)}</b> — ${esc(p.desc)}`,p.date,!i)+`<div class="stack">${esc(p.stack)}</div>`+ul(p.bullets)).join("");
+  h += `<p class="body" style="margin-top:5pt"><b>Also built:</b> ${R.also.map(a=>`${L(a.name,a.url)} (${esc(a.desc)})`).join(" · ")}</p>`;
+  h += `<h2>SKILLS</h2>` + R.skills.map(([k,v])=>`<div class="skill"><b>${esc(k)}:</b> ${esc(v)}</div>`).join("");
+  h += `<h2>EDUCATION</h2>` + R.education.map((e,i)=>row(`<b>${esc(e.deg)}</b>${e.org ? " — "+esc(e.org) : ""}`,e.date,!i)).join("");
+  return h;
+}
+
+function fit(){
+  const page = document.getElementById("page"), stage = document.getElementById("stage");
+  page.style.transform = "none";
+  const w = page.offsetWidth, h = page.offsetHeight;
+  const s = Math.min(1, (document.documentElement.clientWidth - 24) / w);
+  page.style.transform = `scale(${s})`;
+  stage.style.width = (w*s) + "px";
+  stage.style.height = (h*s) + "px";
+}
+
+/* ---------- Text-based PDF (ATS-Safe Vector Stream) ---------- */
+const PW=595.28, PH=841.89, ML=40, MR=40, MT=36, MB=34, W=PW-ML-MR;
+const NAVY=[29,53,87], INK=[20,20,20], MUTED=[85,85,85], SOFT=[60,60,60], RULE=[200,204,210];
+
+function layout(doc, fs, draw){
+  const lh = fs*1.34;
+  let y = MT;
+  const setF = (st,sz,c) => { doc.setFont("helvetica",st); doc.setFontSize(sz); if(c) doc.setTextColor(c[0],c[1],c[2]); };
+  const base = (top,sz,l) => top + (l - sz)/2 + sz*0.8;
+
+  function rich(segs, x, maxW, sz, color, l){
+    const toks = [];
+    segs.forEach(s => {
+      if(!s || !s.t) return;
+      s.t.split(" ").forEach(w => {
+        if(w) toks.push({w, st:s.b?"bold":(s.i?"italic":"normal"), u:s.u||""});
+      });
+    });
+    const lines = []; let cur = [], cx = 0;
+    toks.forEach(tk => {
+      setF(tk.st, sz);
+      const ww = doc.getTextWidth(tk.w), sp = doc.getTextWidth(" ");
+      if(cur.length && cx + sp + ww > maxW){ lines.push(cur); cur = []; cx = 0; }
+      tk.x = cur.length ? cx + sp : 0; tk.ww = ww; cx = tk.x + ww; cur.push(tk);
+    });
+    if(cur.length) lines.push(cur);
+    if(draw) lines.forEach((ln,li) => {
+      const by = base(y + li*l, sz, l);
+      for(let i=0; i<ln.length;){
+        let j = i, txt = ln[i].w;
+        while(j+1 < ln.length && ln[j+1].st === ln[i].st && ln[j+1].u === ln[i].u){ j++; txt += " " + ln[j].w; }
+        setF(ln[i].st, sz, color);
+        doc.text(txt, x + ln[i].x, by);
+        if(ln[i].u) doc.link(x + ln[i].x, by - sz*0.8, ln[j].x + ln[j].ww - ln[i].x, sz, {url: ln[i].u});
+        i = j + 1;
+      }
+    });
+    return lines.length;
+  }
+
+  function heading(t){
+    y += 8;
+    if(draw){
+      setF("bold",10.5,NAVY); doc.text(t, ML, base(y,10.5,14));
+      doc.setDrawColor(RULE[0],RULE[1],RULE[2]); doc.setLineWidth(0.8); doc.line(ML, y+16, PW-MR, y+16);
+    }
+    y += 21;
+  }
+  function row(segs, date, first){
+    if(!first) y += 5;
+    setF("normal", fs);
+    const dw = date ? doc.getTextWidth(date) : 0;
+    const n = rich(segs, ML, W - dw - 14, fs, INK, lh);
+    if(draw && date){ setF("normal", fs, SOFT); doc.text(date, PW-MR, base(y,fs,lh), {align:"right"}); }
+    y += n*lh;
+  }
+  function bullets(list){
+    list.forEach(b => {
+      if(draw){ setF("normal", fs, MUTED); doc.text("•", ML+3, base(y,fs,lh)); }
+      const n = rich([{t:b}], ML+12, W-12, fs, INK, lh);
+      y += n*lh + 0.8;
+    });
+  }
+
+  // Header
+  if(draw){ setF("bold",20,INK); doc.text(R.name, ML, base(y,20,24)); }
+  y += 24;
+  if(draw){ setF("bold",11,NAVY); doc.text(R.title, ML, base(y,11,15)); }
+  y += 16;
+  R.contact.forEach(line => {
+    const segs = []; line.forEach((c,i) => { if(i) segs.push({t:"·"}); segs.push({t:c.t, u:c.u}); });
+    y += rich(segs, ML, W, 8.8, SOFT, 12) * 12;
+  });
+
+  heading("SUMMARY");
+  y += rich([{t:R.summary}], ML, W, fs, INK, lh) * lh;
+
+  heading("EXPERIENCE");
+  R.experience.forEach((e,i) => { row([{t:e.role,b:1},{t:e.org ? "— "+e.org : ""}], e.date, i===0); y += 1; bullets(e.bullets); });
+
+  heading("PROJECTS");
+  R.projects.forEach((p,i) => {
+    row([{t:p.name,b:1,u:p.url},{t:"— "+p.desc}], p.date, i===0);
+    const sl = 8.8*1.32;
+    y += rich([{t:p.stack,i:1}], ML, W, 8.8, MUTED, sl) * sl;
+    bullets(p.bullets);
+  });
+  y += 5;
+  const asegs = [{t:"Also built:",b:1}];
+  R.also.forEach((a,i) => { if(i) asegs.push({t:"·"}); asegs.push({t:a.name,u:a.url}); asegs.push({t:"("+a.desc+")"}); });
+  y += rich(asegs, ML, W, fs, INK, lh) * lh;
+
+  heading("SKILLS");
+  R.skills.forEach(([k,v]) => { y += rich([{t:k+":",b:1},{t:v}], ML, W, fs, INK, lh) * lh; });
+
+  heading("EDUCATION");
+  R.education.forEach((e,i) => row([{t:e.deg,b:1},{t:e.org ? "— "+e.org : ""}], e.date, i===0));
+
+  return y;
+}
+
+function calculateFit(){
+  if(!window.jspdf) return { fs: 9.8, height: 0, pct: 96 };
+  const { jsPDF } = window.jspdf;
+  let fs = 9.8;
+  let finalH = 0;
+  while(true){
+    const probe = new jsPDF({unit:"pt", format:"a4"});
+    finalH = layout(probe, fs, false);
+    if(finalH <= PH - MB || fs <= 8.2) break;
+    fs = +(fs - 0.2).toFixed(2);
+  }
+  const pct = Math.round((finalH / (PH - MB)) * 100);
+  return { fs, height: finalH, pct };
+}
+
+function updateBudget(){
+  const { fs, pct } = calculateFit();
+  const badge = document.getElementById("budgetBadge");
+  badge.textContent = `A4 Fit: ${pct}% (${fs}pt)`;
+  badge.className = "badge " + (pct > 100 ? "overflow" : (pct > 97 ? "warn" : "fit"));
+}
+
+function makePDF(){
+  const { jsPDF } = window.jspdf;
+  const { fs } = calculateFit();
+  const doc = new jsPDF({unit:"pt", format:"a4"});
+  doc.setProperties({
+    title: `${R.name} - Resume`,
+    author: R.name,
+    subject: R.title,
+    keywords: "Full-Stack Product Engineer, React, Next.js, TypeScript, Node.js, Supabase, PostgreSQL, Playwright"
+  });
+  layout(doc, fs, true);
+  return doc;
+}
+
+/* ---------- Word (.doc) ---------- */
+function wordHTML(){
+  const L = (t,u) => u ? `<a href="${u}">${esc(t)}</a>` : esc(t);
+  const H = t => `<h2>${t}</h2>`;
+  const row = (left,date,first) => `<p style="margin-top:${first?0:5}pt">${left}${date ? ` &nbsp;|&nbsp; <span style="color:#3C3C3C">${esc(date)}</span>` : ""}</p>`;
+  const ul = list => `<ul style="margin-top:1pt;margin-bottom:0">${list.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
+  let h = `<h1>${esc(R.name)}</h1><p class="t">${esc(R.title)}</p>`;
+  h += R.contact.map(l => `<p class="c">${l.map(c=>L(c.t,c.u)).join(" · ")}</p>`).join("");
+  h += H("SUMMARY") + `<p>${esc(R.summary)}</p>`;
+  h += H("EXPERIENCE") + R.experience.map((e,i)=>row(`<b>${esc(e.role)}</b>${e.org?" — "+esc(e.org):""}`,e.date,!i)+ul(e.bullets)).join("");
+  h += H("PROJECTS") + R.projects.map((p,i)=>row(`<b>${L(p.name,p.url)}</b> — ${esc(p.desc)}`,p.date,!i)+`<p class="s">${esc(p.stack)}</p>`+ul(p.bullets)).join("");
+  h += `<p style="margin-top:5pt"><b>Also built:</b> ${R.also.map(a=>`${L(a.name,a.url)} (${esc(a.desc)})`).join(" · ")}</p>`;
+  h += H("SKILLS") + R.skills.map(([k,v])=>`<p><b>${esc(k)}:</b> ${esc(v)}</p>`).join("");
+  h += H("EDUCATION") + R.education.map((e,i)=>row(`<b>${esc(e.deg)}</b>${e.org ? " — "+esc(e.org) : ""}`,e.date,!i)).join("");
+  const css = `@page WordSection1{size:595.3pt 841.9pt;margin:32pt 40pt 30pt 40pt}
+div.WordSection1{page:WordSection1}
+body{font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;color:#141414}
+p{margin:0;line-height:125%}
+h1{font-size:19pt;margin:0;color:#141414}
+h2{font-size:10.5pt;color:#1D3557;margin:8pt 0 3pt 0;padding-bottom:2pt;border-bottom:solid #C8CCD2 1.0pt}
+.t{font-size:11pt;color:#1D3557;font-weight:bold}
+.c{font-size:8.8pt;color:#3C3C3C}
+.s{font-size:8.8pt;color:#555555;font-style:italic}
+li{margin:0;line-height:125%}
+a{color:#141414;text-decoration:none}`;
+  return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${esc(R.name)} - Resume</title><style>${css}</style></head><body><div class="WordSection1">${h}</div></body></html>`;
+}
+
+function download(blob, name){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+
+function render(){
+  document.getElementById("page").innerHTML = previewHTML();
+  fit();
+  updateBudget();
+}
+
+window.addEventListener("resize", fit);
+window.addEventListener("DOMContentLoaded", render);
+
+document.getElementById("pdfBtn").addEventListener("click", () => {
+  try{
+    if(!window.jspdf){ status("PDF library didn't load. Use Print → Save as PDF instead."); return; }
+    const doc = makePDF();
+    const filename = `${R.name.replace(/\s+/g,"_")}_Resume.pdf`;
+    download(doc.output("blob"), filename);
+    status(`PDF downloaded: ${filename} (exact 1-page A4, vector text).`);
+  }catch(e){
+    console.error(e);
+    status("PDF download was blocked here. Use Print → Save as PDF instead.");
+  }
+});
+
+document.getElementById("docBtn").addEventListener("click", () => {
+  try{
+    const filename = `${R.name.replace(/\s+/g,"_")}_Resume.doc`;
+    download(new Blob(["\ufeff", wordHTML()], {type:"application/msword;charset=utf-8"}), filename);
+    status(`Word file downloaded: ${filename}. Open and Save As → .docx if portal requires .docx.`);
+  }catch(e){ status("Word download was blocked here: " + e.message); }
+});
+
+document.getElementById("printBtn").addEventListener("click", () => {
+  try{ window.print(); }catch(e){ status("Print isn't available in this view."); }
+});
+
+// JSON Customization Drawer
+const drawer = document.getElementById("drawer");
+const backdrop = document.getElementById("backdrop");
+const jsonEditor = document.getElementById("jsonEditor");
+
+document.getElementById("editBtn").addEventListener("click", () => {
+  jsonEditor.value = JSON.stringify(R, null, 2);
+  drawer.classList.add("open");
+  backdrop.style.display = "block";
+});
+
+function closeDrawer(){
+  drawer.classList.remove("open");
+  backdrop.style.display = "none";
+}
+
+document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
+backdrop.addEventListener("click", closeDrawer);
+
+document.getElementById("applyDataBtn").addEventListener("click", () => {
+  try{
+    const parsed = JSON.parse(jsonEditor.value);
+    R = parsed;
+    localStorage.setItem("mohit_resume_classic_data", JSON.stringify(R));
+    render();
+    closeDrawer();
+    status("Resume updated and persisted to localStorage.");
+  }catch(err){
+    alert("Invalid JSON: " + err.message);
+  }
+});
+
+document.getElementById("resetDataBtn").addEventListener("click", () => {
+  if(confirm("Reset all resume data to default?")){
+    R = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    localStorage.removeItem("mohit_resume_classic_data");
+    jsonEditor.value = JSON.stringify(R, null, 2);
+    render();
+    closeDrawer();
+    status("Resume reset to default configuration.");
+  }
+});
+
+render();
+</script>
+</body>
+</html>
