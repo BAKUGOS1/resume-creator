@@ -175,15 +175,10 @@ function templateCard(t: (typeof TEMPLATE_LIST)[number], headingLevel: 'h2' | 'h
 }
 
 function tickerCard(id: TemplateId, i: number): string {
-  const t = TEMPLATE_PAGES[id];
   const name = TEMPLATE_LIST.find((x) => x.id === id)!.name;
   return `<li>
   <a class="tcard" href="/resumes?template=${id}" aria-label="Use ${e(name)} résumé template">
-    <span class="tcard-frame"><img src="/templates/${id}.webp" width="600" height="849" alt="" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async" draggable="false"></span>
-    <span class="tcard-info">
-      <span class="tcard-row"><strong class="tcard-name">${e(name)}</strong><span class="tcard-pill">${e(t.pill)}</span></span>
-      <span class="tcard-desc">${e(t.card)}</span>
-    </span>
+    <span class="tcard-frame"><img src="/templates/${id}.webp" width="600" height="849" alt="${e(name)} résumé template preview" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async" draggable="false"></span>
   </a>
 </li>`;
 }
