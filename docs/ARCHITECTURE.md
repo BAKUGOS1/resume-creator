@@ -17,7 +17,7 @@
   PageSvg     buildPdf       PrintRoot      checks.ts
   (preview)   (jsPDF)        (print)        (page count, glyph issues)
 
- DOCX and TXT are generated from the Resume data, not from draw ops, so Word can reflow them.
+ DOCX, TXT and the responsive web résumé (engine/html/buildHtml.ts) are generated from the Resume data, not from draw ops, so they can reflow.
 ```
 
 ## Layers and rules
@@ -35,7 +35,8 @@
 2. **Text** (`layout/text.ts`). Tokenises runs, supports `**bold**`, breaks greedily at spaces, hard-breaks over-long words, and splits each piece by font.
 3. **Composer** (`layout/composer.ts`). Turns content into *blocks* (a line, a rule, a heading) that carry collapsible space-before and a keep-with-next flag.
 4. **Paginator** (`layout/paginate.ts`). Places blocks on pages. A keep-with-next chain moves to the next page as a whole when it doesn't fit (heading + entry title + first bullet), and spacing collapses at the top of a page.
-5. **Templates** (`templates/`). A `TemplateSpec` is declarative: faces, sizes, palette, header and section-heading variant, plus Word settings. One shared renderer (`render.ts`) turns a résumé plus a spec into blocks, which keeps every template single-column and ATS-safe.
+5. **Templates** (`templates/`). Optional `features` (`headerBand`, `timeline`, `pageEdge`) and extra heading variants (`rail`, `hairline`, `underbar`) are opt-in, so templates without them render byte-for-byte as before. `tests/unit/templates.test.ts` enforces this with golden hashes for the original four templates.
+   A `TemplateSpec` is declarative: faces, sizes, palette, header and section-heading variant, plus Word settings. One shared renderer (`render.ts`) turns a résumé plus a spec into blocks, which keeps every template single-column and ATS-safe.
 6. **Fit to page** (`index.ts`). Binary-searches the type scale between `MIN_FIT_SCALE` and the user's scale.
 
 ## Recipes
@@ -56,6 +57,16 @@
 ### Change the schema
 1. Bump `SCHEMA_VERSION` and extend `coerceResume` in `domain/migrate.ts` so old documents are upgraded (it already fills missing fields with defaults).
 2. Saved data is re-validated on every load, and damaged entries are skipped and reported rather than crashing the app.
+
+## Pages and routes
+
+| URL | Served file | Purpose |
+| --- | --- | --- |
+| `/` | `index.html` | Static SEO landing page (no React, tiny CSS, progressive-enhancement script) |
+| `/resumes`, `/resume/:id` | `app.html` | React builder (`noindex`) |
+| anything else | `404.html` | Real 404 status |
+
+The Vite dev and preview servers apply the same rewrites through the `app-routes` plugin in `vite.config.ts`. So do `vercel.json` and `server.js`.
 
 ## Security model
 

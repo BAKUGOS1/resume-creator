@@ -88,8 +88,28 @@ describe('import & migration', () => {
     const res = parseResume({
       schemaVersion: 2,
       sections: [
-        { id: 's', kind: 'skills', items: [{ id: 'x', label: 'A' }, { id: 'x', label: 'B' }] },
-        { id: 's', kind: 'experience', items: [{ id: 'x', role: 'R', bullets: [{ id: 'x', text: 'a' }, { id: 'x', text: 'b' }] }] },
+        {
+          id: 's',
+          kind: 'skills',
+          items: [
+            { id: 'x', label: 'A' },
+            { id: 'x', label: 'B' },
+          ],
+        },
+        {
+          id: 's',
+          kind: 'experience',
+          items: [
+            {
+              id: 'x',
+              role: 'R',
+              bullets: [
+                { id: 'x', text: 'a' },
+                { id: 'x', text: 'b' },
+              ],
+            },
+          ],
+        },
       ],
     });
     expect(res.ok).toBe(true);

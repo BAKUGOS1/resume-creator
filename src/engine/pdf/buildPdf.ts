@@ -48,6 +48,9 @@ export function renderPdf(JsPDFCtor: typeof JsPDF, layout: LayoutResult, fonts: 
         doc.setDrawColor(op.color);
         doc.setLineWidth(op.width);
         doc.line(op.x1, op.y1, op.x2, op.y2);
+      } else if (op.type === 'circle') {
+        doc.setFillColor(op.color);
+        doc.circle(op.cx, op.cy, op.r, 'F');
       } else {
         doc.link(op.x, op.y, op.w, op.h, { url: op.url });
       }

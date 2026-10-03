@@ -7,13 +7,15 @@ Live: [mohitstack.vercel.app](https://mohitstack.vercel.app)
 ## Features
 
 - **Live preview = the PDF.** One layout engine produces draw operations. The SVG preview, the PDF and print all render the same ops with the same font files, so line breaks always match.
-- **Four ATS-safe templates.** Modern, Classic, Signature (the original design) and Compact. All are single-column, use real text and standard headings, and have clickable links.
+- **Eight ATS-safe templates.** Modern, Classic, Signature (the original design) and Compact, plus four newer design directions: **Timeline** (dates in a gutter beside a timeline rule), **Editorial** (serif display name, hairline headings), **Accent Rail** (coloured rail headings, thin page edge) and **Executive Banner** (softly tinted header band). Every template keeps one reading order per line, real text, standard headings and clickable links.
+- **Responsive web résumé.** The preview toggles between *Page* (pixel-exact PDF layout) and *Web*, a semantic HTML résumé that reflows on phones, tablets and desktops. Phone, tablet and desktop width presets are built in, and you can export it as a self-contained `.html` with schema.org `Person` data. Phones open the Web view by default.
 - **Multi-page with smart pagination.** Headings never end a page alone, short entries stay together, and multi-page résumés get page footers. Optional *fit to one page* shrinks text down to a readable minimum.
 - **Structured editor.** Personal details, summary, experience, education, projects, skills, certifications and custom sections. You can reorder, hide, duplicate and rename sections and items. Bullets support **bold** markup, Enter for a new line and Alt+↑/↓ to reorder.
 - **Validation and résumé health.** Format errors show next to the field. A Check tab scores the résumé and lists issues (missing contact details, inverted dates, bad links, weak verbs, unquantified bullets, unsupported characters). Clicking an issue jumps to the field.
 - **Design controls.** Accent colour, text size, margins, spacing, A4 or US Letter, and date format.
 - **Persistence and safety.** Autosave to `localStorage`, undo/redo (Ctrl+Z / Ctrl+Shift+Z), cross-tab sync, JSON backup and restore, and a crash screen that lets you download your data.
 - **Unicode.** Latin, Greek, Cyrillic and Vietnamese with automatic per-character font fallback. Characters the PDF can't render are reported rather than silently dropped.
+- **SEO-ready site.** A static, instantly loading landing page at `/` with title and description, a canonical URL, Open Graph and Twitter cards, and JSON-LD (`WebSite`, `WebApplication`, `FAQPage`). It also ships `robots.txt`, `sitemap.xml`, a web manifest and icons. The builder itself lives at `/resumes` and is marked `noindex`.
 - **Accessible and responsive.** Keyboard-operable menus, tabs and dialogs; labelled controls; WCAG AA colour contrast; light and dark themes; and an Edit/Preview toggle on phones.
 
 ## Quick start
@@ -27,7 +29,7 @@ Requires Node 20.19+ (see `.nvmrc`).
 
 | Script | What it does |
 | --- | --- |
-| `npm run dev` | Vite dev server |
+| `npm run dev` | Vite dev server (landing at `/`, builder at `/resumes`) |
 | `npm run build` | Type-check and build to `dist/` |
 | `npm start` | Serve `dist/` with the hardened production server (port 4173) |
 | `npm run typecheck` | Strict TypeScript for the app, tests and configs |
@@ -51,7 +53,14 @@ public/fonts   Static subset TTFs (OFL) used by both the preview and the PDF
 tests/         unit/ (Vitest) and e2e/ (Playwright)
 ```
 
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) covers how the pieces fit, plus how to add a template, a section type or a schema migration.
+[docs/DESIGN.md](docs/DESIGN.md) records the research behind the templates. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) covers how the pieces fit, plus how to add a template, a section type or a schema migration.
+
+## SEO checklist after deploying
+
+1. Make sure the production URL is `https://mohitstack.vercel.app`. If it changes, update it in `index.html`, `public/robots.txt` and `public/sitemap.xml`.
+2. Add the site to [Google Search Console](https://search.google.com/search-console) and Bing Webmaster Tools, then submit `/sitemap.xml`.
+3. Validate the structured data with Google's [Rich Results Test](https://search.google.com/test/rich-results).
+4. Rankings come from content and links over time. Linking to the builder from your portfolio and GitHub README helps most.
 
 ## Your data
 
@@ -62,7 +71,7 @@ tests/         unit/ (Vitest) and e2e/ (Playwright)
 
 ## Deployment
 
-Vercel picks up `vercel.json`: Vite build, `dist/` output, SPA rewrites, long-lived caching for hashed assets and fonts, and security headers (strict CSP with no inline scripts or third-party origins, `nosniff`, `frame-ancestors 'none'`, HSTS, and so on). `server.js` sends the same headers (from `security-headers.json`) for self-hosting and for the E2E run.
+Vercel picks up `vercel.json`: Vite multi-page build (`index.html` landing + `app.html` builder), `dist/` output, rewrites for `/resumes` and `/resume/:id`, a static `404.html`, long-lived caching for hashed assets and fonts, and security headers (strict CSP with no inline scripts or third-party origins, `nosniff`, `frame-ancestors 'none'`, HSTS, and so on). `server.js` sends the same headers (from `security-headers.json`) for self-hosting and for the E2E run.
 
 ## Fonts and licences
 

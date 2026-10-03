@@ -41,7 +41,15 @@ export interface LinkOp {
   url: string;
 }
 
-export type DrawOp = TextOp | RectOp | LineOp | LinkOp;
+export interface CircleOp {
+  type: 'circle';
+  cx: number;
+  cy: number;
+  r: number;
+  color: string;
+}
+
+export type DrawOp = TextOp | RectOp | LineOp | LinkOp | CircleOp;
 
 export interface PageSize {
   width: number;

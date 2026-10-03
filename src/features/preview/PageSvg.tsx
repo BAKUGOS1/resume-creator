@@ -43,6 +43,8 @@ export const PageSvg = memo(function PageSvg({ page, width = '100%', label, inte
             );
           case 'rect':
             return <rect key={i} x={op.x} y={op.y} width={op.w} height={op.h} fill={op.color} />;
+          case 'circle':
+            return <circle key={i} cx={op.cx} cy={op.cy} r={op.r} fill={op.color} />;
           case 'line':
             return <line key={i} x1={op.x1} y1={op.y1} x2={op.x2} y2={op.y2} stroke={op.color} strokeWidth={op.width} />;
           case 'link':

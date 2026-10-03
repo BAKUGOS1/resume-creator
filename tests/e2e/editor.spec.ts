@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { createBlank, expect, openDashboard, previewText, test } from './fixtures';
+import { createBlank, expect, openDashboard, previewText, test, webText } from './fixtures';
 
 test.beforeEach(async ({ errors: _errors }) => {});
 
@@ -208,13 +208,17 @@ test('menus and dialogs are keyboard operable', async ({ page }) => {
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
-test('unknown routes and résumés show a helpful not-found page', async ({ page }) => {
+test('unknown routes and résumés show a helpful not-found page', async ({ page, errors }) => {
   await page.goto('/resume/does-not-exist');
   await expect(page.getByText('This résumé isn’t in this browser')).toBeVisible();
-  await page.goto('/nope/at/all');
-  await expect(page.getByRole('heading', { name: 'Not found' })).toBeVisible();
   await page.getByRole('link', { name: 'Go to your résumés' }).click();
   await expect(page.getByRole('heading', { name: 'Your résumés' })).toBeVisible();
+  const res = await page.goto('/nope/at/all');
+  expect(res?.status()).toBe(404);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  // The browser logs the expected 404 response itself; nothing else may error.
+  expect(errors.filter((e) => !e.includes('404'))).toEqual([]);
+  errors.length = 0;
 });
 
 test('print renders every page at paper size', async ({ page }) => {
@@ -232,4 +236,42 @@ test('print renders every page at paper size', async ({ page }) => {
   await expect(svg).toHaveAttribute('width', '595.28pt');
   await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
   await expect(page.locator('#print-root')).toHaveCount(0);
+});
+
+test('web view reflows the résumé and exports a responsive HTML page', async ({ page }) => {
+  await openDashboard(page);
+  await page.getByRole('link', { name: 'Sample — Software Engineer' }).click();
+  await page.getByRole('radio', { name: 'Web view (responsive)' }).click();
+  await expect.poll(() => webText(page)).toContain('Jordan Ellis');
+  await page.getByLabel('Full name').fill('Jordan Q. Ellis');
+  await expect.poll(() => webText(page)).toContain('Jordan Q. Ellis');
+  for (const device of ['Phone (390 px)', 'Tablet (768 px)', 'Desktop (full width)']) {
+    await page.getByRole('radio', { name: device }).click();
+    const overflow = await page
+      .frameLocator('iframe')
+      .locator('html')
+      .evaluate((el) => el.scrollWidth - el.clientWidth);
+    expect(overflow, device).toBeLessThanOrEqual(0);
+  }
+
+  const dl = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'More export options' }).click();
+  await page.getByRole('menuitem', { name: /Web page/ }).click();
+  const file = await dl;
+  expect(file.suggestedFilename()).toBe('Jordan_Q_Ellis_Resume.html');
+  const html = await readFile(await file.path(), 'utf8');
+  expect(html).toContain('<h1>Jordan Q. Ellis</h1>');
+  expect(html).toContain('"@type":"Person"');
+});
+
+test('new design directions render and switch from the Design tab', async ({ page }) => {
+  await openDashboard(page);
+  await page.getByRole('link', { name: 'Sample — Software Engineer' }).click();
+  await page.getByRole('tab', { name: 'Design' }).click();
+  for (const name of ['Timeline', 'Editorial', 'Accent Rail', 'Executive Banner']) {
+    await page.getByRole('radio', { name: new RegExp(name) }).click();
+    await expect(page.getByRole('radio', { name: new RegExp(name) })).toHaveAttribute('aria-checked', 'true');
+    await expect.poll(() => previewText(page)).toContain('Jordan Ellis');
+  }
+  await expect(page.locator('[aria-label="Résumé preview"] svg rect[x="0"][y="0"]').first()).toBeVisible();
 });

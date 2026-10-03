@@ -150,7 +150,7 @@ export const BasicsSchema = z.object({
   links: z.array(LinkSchema).check(z.maxLength(LIMITS.links)),
 });
 
-export const TEMPLATE_IDS = ['signature', 'classic', 'modern', 'compact'] as const;
+export const TEMPLATE_IDS = ['signature', 'classic', 'modern', 'compact', 'timeline', 'editorial', 'rail', 'executive'] as const;
 export const TemplateIdSchema = z.enum(TEMPLATE_IDS);
 
 export const DesignSchema = z.object({

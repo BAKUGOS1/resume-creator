@@ -6,7 +6,7 @@ import type { FontSet } from '../../engine/fonts/loader';
 import { downloadBlob, fileSlug } from '../../lib/download';
 import { flushSaves } from '../../store/resumes';
 
-export type ExportFormat = 'pdf' | 'docx' | 'txt' | 'json';
+export type ExportFormat = 'pdf' | 'docx' | 'txt' | 'json' | 'html';
 
 export const fileBase = (r: Resume) => `${fileSlug(r.basics.name || r.title)}_Resume`;
 
@@ -31,6 +31,12 @@ export async function exportResume(format: ExportFormat, resume: Resume, layout:
       const { toPlainText } = await import('../../engine/text/plainText');
       const name = `${base}.txt`;
       downloadBlob(new Blob([toPlainText(resume)], { type: 'text/plain;charset=utf-8' }), name);
+      return name;
+    }
+    case 'html': {
+      const { buildResumeHtml } = await import('../../engine/html/buildHtml');
+      const name = `${base}.html`;
+      downloadBlob(new Blob([buildResumeHtml(resume, { fonts })], { type: 'text/html;charset=utf-8' }), name);
       return name;
     }
     case 'json': {

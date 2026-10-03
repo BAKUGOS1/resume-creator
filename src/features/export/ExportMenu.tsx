@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../../components/ui/Button';
 import { Dialog } from '../../components/ui/Dialog';
-import { DownloadIcon, FileJsonIcon, FileTextIcon, FileTypeIcon, PrinterIcon } from '../../components/ui/icons';
+import { DownloadIcon, FileJsonIcon, FileTextIcon, FileTypeIcon, MonitorSmartphoneIcon, PrinterIcon } from '../../components/ui/icons';
 import { Menu } from '../../components/ui/Menu';
 import type { Issue } from '../../domain/checks';
 import type { Resume } from '../../domain/schema';
@@ -10,7 +10,7 @@ import type { FontSet } from '../../engine/fonts/loader';
 import { toast } from '../../store/ui';
 import { exportResume, type ExportFormat } from './exporters';
 
-const LABEL: Record<ExportFormat, string> = { pdf: 'PDF', docx: 'Word document', txt: 'Plain text', json: 'JSON backup' };
+const LABEL: Record<ExportFormat, string> = { pdf: 'PDF', docx: 'Word document', txt: 'Plain text', json: 'JSON backup', html: 'Web page' };
 
 export interface ExportMenuProps {
   resume: Resume;
@@ -72,6 +72,7 @@ export function ExportMenu({ resume, layout, fonts, issues, onPrint, onReview }:
             { label: 'PDF (vector, ATS-ready)', icon: <DownloadIcon />, onSelect: () => request('pdf'), disabled: !layout },
             { label: 'Word (.docx)', icon: <FileTypeIcon />, onSelect: () => request('docx') },
             { label: 'Plain text (.txt)', icon: <FileTextIcon />, onSelect: () => request('txt') },
+            { label: 'Web page (.html, responsive)', icon: <MonitorSmartphoneIcon />, onSelect: () => request('html') },
             { label: 'Print…', icon: <PrinterIcon />, hint: 'Ctrl P', onSelect: () => request('print'), disabled: !layout },
             { label: 'JSON backup', icon: <FileJsonIcon />, separatorBefore: true, onSelect: () => request('json') },
           ]}

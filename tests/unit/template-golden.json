@@ -1,0 +1,18 @@
+{
+ "sample-modern": "b02d1113931be3524074800a580a3e61ac8d6807",
+ "sample-modern-docx": "f7ad67d157ebfbb5834fd1339cf5d81bc54a25e5",
+ "sample-classic": "419390d46b7d8ae7211c92ac14503132aa85eb3f",
+ "sample-classic-docx": "b3139afd2124e622c391b690daacd8a91b9953d8",
+ "sample-signature": "13998b547cf07468fd5e2c7115efe89bda025dbc",
+ "sample-signature-docx": "86b841935d32d184856240e86ea005a133b9664d",
+ "sample-compact": "028997598290962a03a786504fa19dbfc4c82111",
+ "sample-compact-docx": "ecd3f4c19096d929fc6b3ab3bf12326d5326a013",
+ "mohit-modern": "248bdda0fae0e46385d60535b02cbe8d2a213404",
+ "mohit-modern-docx": "b24947894a066c75ef253db20c63cae0d4f492f9",
+ "mohit-classic": "0814370e0a3721d623231c3bbf09f66d29be6205",
+ "mohit-classic-docx": "e8775717aba1e82ea5a84a0fd818faf9d3389696",
+ "mohit-signature": "4a7e628dba9e2d6e4b2e3f8f7791897ef54c72a6",
+ "mohit-signature-docx": "bc0a39b6cd3cd451e1105626178473ab201cb467",
+ "mohit-compact": "45aad62133ad61ba380c61e5e0cdafb9e3f93c70",
+ "mohit-compact-docx": "73e21d309a4b6bfde51ea575b1f00bb396f0f4e3"
+}

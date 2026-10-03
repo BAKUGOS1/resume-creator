@@ -64,7 +64,7 @@ export interface TemplateSpec {
     rule: boolean;
   };
   section: {
-    variant: 'signature' | 'underline' | 'accent' | 'inline-rule';
+    variant: 'signature' | 'underline' | 'accent' | 'inline-rule' | 'rail' | 'hairline' | 'underbar';
     color: 'ink' | 'body' | 'accent';
     labelSize: number;
     labelCs: number;
@@ -91,5 +91,14 @@ export interface TemplateSpec {
     bulletAccent: boolean;
     bulletIndent: number;
     bulletGap: number;
+  };
+  /** Opt-in layout features; templates without them render exactly as before. */
+  features?: {
+    /** Lightly tinted band behind the header (text stays dark for contrast and ATS). */
+    headerBand?: { tint: number; topStrip: number };
+    /** Dates in a left gutter beside a vertical rule. Still one reading order per line. */
+    timeline?: { maxGutter: number };
+    /** Thin accent strip along the left page edge (no text, purely visual). */
+    pageEdge?: { width: number };
   };
 }

@@ -15,7 +15,7 @@ export { expect };
 
 /** Opens the dashboard on a clean profile and waits for the seeded sample. */
 export async function openDashboard(page: Page) {
-  await page.goto('/');
+  await page.goto('/resumes');
   await expect(page.getByRole('heading', { name: 'Your résumés' })).toBeVisible();
 }
 
@@ -32,3 +32,6 @@ export const previewText = (page: Page) =>
     .locator('[aria-label="Résumé preview"] svg text')
     .allTextContents()
     .then((t) => t.join(' '));
+
+/** Text of the responsive web résumé shown in the Web preview iframe. */
+export const webText = (page: Page) => page.frameLocator('iframe[title="Web résumé preview"]').locator('main').innerText();

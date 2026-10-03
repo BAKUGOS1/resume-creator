@@ -47,11 +47,7 @@ function toBullets(v: unknown, seen: Set<string> = new Set()): Bullet[] {
   return arr(v)
     .slice(0, LIMITS.bulletsPerItem)
     .map((b) =>
-      typeof b === 'string'
-        ? createBullet(b.slice(0, LIMITS.bullet))
-        : isObj(b)
-          ? { id: uniqueId(seen, b.id, 'b_'), text: str(b.text, LIMITS.bullet) }
-          : null,
+      typeof b === 'string' ? createBullet(b.slice(0, LIMITS.bullet)) : isObj(b) ? { id: uniqueId(seen, b.id, 'b_'), text: str(b.text, LIMITS.bullet) } : null,
     )
     .filter((b): b is Bullet => b !== null);
 }

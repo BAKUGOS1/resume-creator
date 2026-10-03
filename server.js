@@ -1,7 +1,7 @@
 /**
  * Zero-dependency production server for the built app (dist/).
  * - Serves only files inside dist/ (no traversal, no dotfiles, GET/HEAD only)
- * - SPA fallback to index.html for app routes
+ * - Landing page at /, React app (app.html) at /resumes and /resume/:id, 404.html otherwise
  * - Same security headers as vercel.json
  * Usage: npm run build && npm start   (PORT=4173 by default)
  */
@@ -73,9 +73,10 @@ const server = createServer(async (req, res) => {
   try {
     const info = await stat(file).catch(() => null);
     if (info?.isFile()) return await serveFile(req, res, file);
-    // Unknown asset-like paths are real 404s; everything else is an app route.
-    if (extname(pathname)) return send(res, 404, 'Not Found');
-    return await serveFile(req, res, join(ROOT, 'index.html'));
+    if (info?.isDirectory() && pathname === '/') return await serveFile(req, res, join(ROOT, 'index.html'));
+    // App routes are served by the SPA shell; "/" by the static landing page (index.html above).
+    if (/^\/(resumes\/?|resume\/[^/]+\/?)$/.test(pathname)) return await serveFile(req, res, join(ROOT, 'app.html'));
+    return await serveFile(req, res, join(ROOT, '404.html'), 404);
   } catch (err) {
     console.error(err);
     if (!res.headersSent) send(res, 500, 'Internal Server Error');

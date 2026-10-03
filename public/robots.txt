@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+# The builder runs on private, per-browser data and has nothing to index.
+Disallow: /resumes
+Disallow: /resume/
+
+Sitemap: https://mohitstack.vercel.app/sitemap.xml

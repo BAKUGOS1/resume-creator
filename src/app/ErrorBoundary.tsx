@@ -36,7 +36,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
           <button type="button" onClick={this.backup} className="h-9 rounded-lg border border-line-strong px-3.5 text-sm font-medium hover:bg-surface-2">
             Download data
           </button>
-          <button type="button" onClick={() => window.location.assign('/')} className="h-9 rounded-lg bg-brand px-3.5 text-sm font-medium text-brand-fg">
+          <button type="button" onClick={() => window.location.assign('/resumes')} className="h-9 rounded-lg bg-brand px-3.5 text-sm font-medium text-brand-fg">
             Reload app
           </button>
         </div>

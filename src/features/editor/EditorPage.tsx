@@ -189,7 +189,7 @@ export function EditorPage({ resume }: { resume: Resume }) {
             </div>
           </aside>
           <main className={cn('min-h-0 min-w-0 flex-1 flex-col lg:flex', mobileView === 'preview' ? 'flex' : 'hidden')}>
-            <PreviewPane layout={layout} loading={loading} error={error} name={resume.basics.name} />
+            <PreviewPane resume={resume} layout={layout} fonts={fonts} loading={loading} error={error} />
           </main>
         </div>
 

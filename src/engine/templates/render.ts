@@ -8,6 +8,7 @@ import type { Resume, Section } from '../../domain/schema';
 import { displayUrl, safeHref } from '../../lib/url';
 import type { Composer } from '../layout/composer';
 import type { Run, TextStyle } from '../layout/text';
+import { shade } from './specs';
 import type { Palette, TemplateSpec } from './types';
 
 export interface RenderOptions {
@@ -17,6 +18,8 @@ export interface RenderOptions {
   spacing: number;
   dateFormat: DateFormat;
   accent: string;
+  /** Page geometry, needed by full-bleed features (header band). */
+  page?: { width: number; top: number };
 }
 
 export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o: RenderOptions): void {
@@ -57,7 +60,28 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
   const metaLH = Math.max(E.metaSize * 1.42, LH * 0.94) * s;
   const titleLH = Math.max(E.titleSize * 1.34 * s, LH);
 
+  /* ---------- timeline gutter (0 for standard templates) ---------- */
+  const timeline = spec.features?.timeline;
+  const visibleSections = resume.sections.filter((sec) => sec.visible);
+  let gutter = 0;
+  let col = 0;
+  if (timeline) {
+    const widths: number[] = [];
+    for (const sec of visibleSections) {
+      if (sec.kind === 'summary') continue;
+      for (const it of sec.items.filter((i) => i.visible)) {
+        const d = 'start' in it ? formatDateRange(it, o.dateFormat) : 'date' in it && it.date ? formatPartialDate(it.date, o.dateFormat) : '';
+        if (d) widths.push(c.m.width(d, styles.date));
+      }
+    }
+    gutter = Math.min(timeline.maxGutter * s, Math.max(48 * s, ...widths));
+    col = gutter + 18 * s;
+  }
+  const railX = c.x + gutter + 9 * s;
+  const fitsGutter = (text: string, style: TextStyle) => !!text && c.m.width(text, style) <= gutter + 0.01;
+
   /* ---------- header ---------- */
+  const headerStart = c.blocks.length;
   const center = H.align === 'center';
   const name = resume.basics.name.trim() || 'Your Name';
   c.paragraph([{ text: name, style: st(f.name, H.nameSize, pal.ink, { cs: H.nameCs, upper: H.nameUpper }) }], {
@@ -95,6 +119,18 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
     c.space(g(4));
     c.paragraph(contact, { lineHeight: H.contactSize * s * 1.45, align: center ? 'center' : 'left' });
   }
+  const band = spec.features?.headerBand;
+  if (band && o.page && c.blocks.length > headerStart) {
+    // Tinted band from the page top to just below the header; drawn first so text sits on top.
+    const blocks = c.blocks.slice(headerStart);
+    const height = blocks.reduce((h, b, i) => h + b.height + (i ? b.spaceBefore : 0), 0);
+    const pad = 16 * s;
+    blocks[0]!.ops.unshift(
+      { type: 'rect', x: 0, y: -o.page.top, w: o.page.width, h: o.page.top + height + pad, color: shade(pal.accent, -(1 - band.tint)) },
+      { type: 'rect', x: 0, y: -o.page.top, w: o.page.width, h: band.topStrip * s, color: pal.accent },
+    );
+    c.space(pad);
+  }
   if (H.rule) {
     c.space(g(6));
     c.rule(pal.rule, 0.8 * s);
@@ -130,6 +166,24 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
         c.add(3 * s, [{ type: 'line', x1: c.x, y1: 1 * s, x2: c.x + c.width, y2: 1 * s, color: pal.rule, width: 0.6 * s }]);
         break;
       }
+      case 'rail': {
+        c.add(lh, [
+          { type: 'rect', x: c.x, y: baseline - label.size * 0.8, w: 2.8 * s, h: label.size * 0.98, color: pal.accent },
+          ...c.paragraphOps(text, label, 9 * s, lh),
+        ]);
+        break;
+      }
+      case 'hairline': {
+        c.rule(pal.ink, 0.5 * s, 0.5 * s);
+        c.space(g(5));
+        c.add(lh, c.paragraphOps(text, label, 0, lh));
+        break;
+      }
+      case 'underbar': {
+        c.add(lh, c.paragraphOps(text, label, 0, lh));
+        c.add(3 * s, [{ type: 'rect', x: c.x, y: 0.4 * s, w: 22 * s, h: 1.8 * s, color: pal.accent }]);
+        break;
+      }
       case 'inline-rule': {
         const y = baseline - label.size * 0.33;
         c.add(lh, [
@@ -148,12 +202,27 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
 
   /** Title line (+ right-aligned date), optional meta line, glued to what follows. */
   const entryHeader = (title: Run[], date: string, meta: Run[]) => {
-    c.paragraph(title, { lineHeight: titleLH, right: dateRuns(date), keep: 'block' });
+    if (timeline && (fitsGutter(date, styles.date) || !date)) {
+      c.paragraph(title, { lineHeight: titleLH, indent: col, marker: date ? { text: date, style: styles.date, offset: 0 } : undefined, keep: 'block' });
+    } else {
+      c.paragraph(title, { lineHeight: titleLH, indent: col, right: dateRuns(date), keep: 'block' });
+    }
     c.keepWithNext();
     if (meta.length) {
-      c.paragraph(meta, { lineHeight: metaLH, keep: 'block' });
+      c.paragraph(meta, { lineHeight: metaLH, indent: col, keep: 'block' });
       c.keepWithNext();
     }
+  };
+
+  /** Timeline: a rule through the entry's blocks with a dot at its title line. */
+  const decorateEntry = (from: number) => {
+    if (!timeline) return;
+    const blocks = c.blocks.slice(from);
+    blocks.forEach((b, i) => {
+      const top = i ? -b.spaceBefore : (titleLH + styles.title.size * 0.72) / 2 - styles.title.size * 0.34;
+      b.ops.unshift({ type: 'line', x1: railX, y1: top, x2: railX, y2: b.height, color: pal.rule, width: 0.8 * s });
+      if (!i) b.ops.push({ type: 'circle', cx: railX, cy: top, r: 2.7 * s, color: pal.accent });
+    });
   };
 
   const metaRuns = (parts: { text: string; link?: string | null; prefix?: string }[]): Run[] => {
@@ -173,8 +242,8 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
       if (i) c.space(g(T.bulletGap));
       c.paragraph([{ text: b.text.trim(), style: styles.body, rich: true }], {
         lineHeight: LH,
-        indent: T.bulletIndent * s,
-        marker: { text: T.bullet, style: styles.bullet, offset: 1.2 * s },
+        indent: col + T.bulletIndent * s,
+        marker: { text: T.bullet, style: styles.bullet, offset: col + 1.2 * s },
         keep: 'block',
       });
     });
@@ -187,7 +256,7 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
       .filter(Boolean)
       .forEach((p, i) => {
         if (i) c.space(g(4));
-        c.paragraph([{ text: p, style: styles.body, rich: true }], { lineHeight: LH, keep: 'lines' });
+        c.paragraph([{ text: p, style: styles.body, rich: true }], { lineHeight: LH, indent: col, keep: 'lines' });
       });
   };
 
@@ -211,6 +280,7 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
     items.forEach((item, idx) => {
       const tight = section.kind === 'skills' || (section.kind === 'custom' && section.layout === 'compact');
       if (idx) c.space(g(tight ? T.bulletGap + 1.2 : E.gap));
+      const entryStart = c.blocks.length;
       switch (section.kind) {
         case 'experience': {
           const it = item as Extract<Section, { kind: 'experience' }>['items'][number];
@@ -241,10 +311,20 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
         }
         case 'skills': {
           const it = item as Extract<Section, { kind: 'skills' }>['items'][number];
+          const label = it.label.trim();
+          if (timeline && fitsGutter(label, styles.strong)) {
+            c.paragraph([{ text: it.keywords.trim(), style: styles.body }], {
+              lineHeight: LH,
+              indent: col,
+              marker: { text: label, style: styles.strong, offset: 0 },
+              keep: 'block',
+            });
+            break;
+          }
           const runs: Run[] = [];
-          if (it.label.trim()) runs.push({ text: `${it.label.trim()}: `, style: styles.strong });
+          if (label) runs.push({ text: `${label}: `, style: styles.strong });
           runs.push({ text: it.keywords.trim(), style: styles.body });
-          c.paragraph(runs, { lineHeight: LH, keep: 'block' });
+          c.paragraph(runs, { lineHeight: LH, indent: col, keep: 'block' });
           break;
         }
         case 'certifications': {
@@ -261,7 +341,10 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
             if (it.description.trim()) runs.push({ text: ` — ${it.description.trim()}`, style: styles.body, rich: true });
             const href = safeHref(it.url);
             if (it.url.trim()) runs.push({ text: '  ', style: styles.body }, { text: displayUrl(it.url), style: href ? styles.link : styles.body, link: href });
-            c.paragraph(runs, { lineHeight: LH, right: dateRuns(range(it)), keep: 'block' });
+            const when = range(it);
+            if (timeline && fitsGutter(when, styles.date))
+              c.paragraph(runs, { lineHeight: LH, indent: col, marker: { text: when, style: styles.date, offset: 0 }, keep: 'block' });
+            else c.paragraph(runs, { lineHeight: LH, indent: col, right: dateRuns(when), keep: 'block' });
             break;
           }
           const meta = metaRuns([{ text: it.location }, { text: it.url ? displayUrl(it.url) : '', link: safeHref(it.url) }]);
@@ -271,9 +354,10 @@ export function renderResume(resume: Resume, spec: TemplateSpec, c: Composer, o:
           break;
         }
       }
+      if (!tight) decorateEntry(entryStart);
       c.releaseKeep();
     });
   };
 
-  resume.sections.filter((sec) => sec.visible).forEach(renderSection);
+  visibleSections.forEach(renderSection);
 }

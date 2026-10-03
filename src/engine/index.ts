@@ -77,9 +77,13 @@ function layoutAt(resume: Resume, fonts: FontSet, scale: number) {
     spacing: SPACING[resume.design.spacing],
     dateFormat: resume.design.dateFormat,
     accent: accentOf(resume),
+    page: { width: size.width, top: margin.top },
   });
   const frame: PageFrame = { ...size, top: margin.top, bottom: margin.bottom };
-  return { pages: paginate(c.blocks, frame), measurer: m, spec, margin };
+  const pages = paginate(c.blocks, frame);
+  const edge = spec.features?.pageEdge;
+  if (edge) for (const p of pages) p.ops.unshift({ type: 'rect', x: 0, y: 0, w: edge.width, h: p.height, color: accentOf(resume) });
+  return { pages, measurer: m, spec, margin };
 }
 
 export function layoutResume(resume: Resume, fonts: FontSet): LayoutResult {

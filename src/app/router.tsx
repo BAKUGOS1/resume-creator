@@ -14,14 +14,16 @@ if (typeof window !== 'undefined') window.addEventListener('popstate', notify);
 
 export function parseRoute(pathname: string): Route {
   const path = pathname.startsWith(base) ? pathname.slice(base.length) || '/' : pathname;
-  if (path === '/' || path === '') return { name: 'dashboard' };
+  // The static landing page owns "/"; the app lives under /resumes.
+  if (path === '/resumes' || path === '/resumes/' || path === '/' || path === '') return { name: 'dashboard' };
   const m = /^\/resume\/([A-Za-z0-9_-]{1,64})\/?$/.exec(path);
   if (m) return { name: 'editor', id: m[1]! };
   return { name: 'notFound' };
 }
 
 export const paths = {
-  dashboard: () => `${base}/`,
+  home: () => `${base}/`,
+  dashboard: () => `${base}/resumes`,
   editor: (id: string) => `${base}/resume/${encodeURIComponent(id)}`,
 };
 

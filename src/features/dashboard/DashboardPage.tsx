@@ -102,7 +102,9 @@ export function DashboardPage() {
       </a>
       <header className="sticky top-0 z-20 border-b border-line bg-bg/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
-          <Logo className="text-[15px]" />
+          <a href="/" aria-label="Resume Creator home" className="rounded-md">
+            <Logo className="text-[15px]" />
+          </a>
           <div className="ml-auto flex items-center gap-1.5">
             <ThemeMenu />
             <Button variant="ghost" icon={<UploadIcon />} onClick={importer.open} className="max-sm:hidden">

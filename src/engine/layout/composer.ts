@@ -126,5 +126,7 @@ export class Composer {
 /** Moves ops down by `dy` (block-relative coordinates). */
 export function shift(ops: DrawOp[], dy: number): DrawOp[] {
   if (!dy) return ops;
-  return ops.map((op) => (op.type === 'line' ? { ...op, y1: op.y1 + dy, y2: op.y2 + dy } : { ...op, y: op.y + dy }));
+  return ops.map((op) =>
+    op.type === 'line' ? { ...op, y1: op.y1 + dy, y2: op.y2 + dy } : op.type === 'circle' ? { ...op, cy: op.cy + dy } : { ...op, y: op.y + dy },
+  );
 }

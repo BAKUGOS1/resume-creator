@@ -1,0 +1,15 @@
+{
+  "name": "Resume Creator — ATS-friendly résumé builder",
+  "short_name": "Resume Creator",
+  "description": "Build ATS-friendly résumés with live preview and PDF, Word and web export.",
+  "start_url": "/resumes",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f5f2",
+  "theme_color": "#b9491a",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
