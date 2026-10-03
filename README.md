@@ -2,7 +2,7 @@
 
 A local-first, ATS-friendly résumé builder. Edit on the left, see a pixel-exact preview on the right, and export a **vector PDF**, **Word (.docx)**, **plain text** or **JSON backup**. There's no account and no server: résumés never leave the browser.
 
-Live: [mohitstack.vercel.app](https://mohitstack.vercel.app)
+Live: [atsresumecreator.vercel.app](https://atsresumecreator.vercel.app) · Author portfolio: [mohitstack.vercel.app](https://mohitstack.vercel.app)
 
 ## Features
 
@@ -57,7 +57,7 @@ tests/         unit/ (Vitest) and e2e/ (Playwright)
 
 ## SEO checklist after deploying
 
-1. Make sure the production URL is `https://mohitstack.vercel.app`. If it changes, update it in `index.html`, `public/robots.txt` and `public/sitemap.xml`.
+1. Make sure the production URL is `https://atsresumecreator.vercel.app` (Vercel → Settings → Domains). If it changes, update it in `index.html`, `public/robots.txt` and `public/sitemap.xml`.
 2. Add the site to [Google Search Console](https://search.google.com/search-console) and Bing Webmaster Tools, then submit `/sitemap.xml`.
 3. Validate the structured data with Google's [Rich Results Test](https://search.google.com/test/rich-results).
 4. Rankings come from content and links over time. Linking to the builder from your portfolio and GitHub README helps most.

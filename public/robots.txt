@@ -4,4 +4,4 @@ Allow: /
 Disallow: /resumes
 Disallow: /resume/
 
-Sitemap: https://mohitstack.vercel.app/sitemap.xml
+Sitemap: https://atsresumecreator.vercel.app/sitemap.xml
