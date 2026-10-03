@@ -381,9 +381,9 @@ export function renderHome(a: Assets, posts: Post[]): string {
 
   return page(
     {
-      title: 'Free ATS-Friendly Resume Builder – PDF & Word | Resume Creator',
+      title: 'Free ATS-Friendly Resume Builder & CV Maker – PDF & Word',
       description:
-        'Build an ATS-friendly resume for free. 8 professional templates, live preview, real-text PDF, Word and mobile web export. No sign-up — your data stays in your browser.',
+        'Build an ATS-friendly resume or CV for free. 8 professional templates, live preview, real-text PDF, Word and mobile web export. No sign-up — your data stays in your browser.',
       path: '/',
       imageAlt: 'Resume Creator: an ATS-friendly résumé shown in the live editor',
       jsonLd,
