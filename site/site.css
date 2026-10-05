@@ -309,7 +309,135 @@ h3 {
 
 /* ---------- hero ---------- */
 .hero {
-  padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(3rem, 7vw, 6rem);
+  /* ---- Tunables ---------------------------------------------------------- */
+  --hero-wrap: 1160px; /* keep in sync with .wrap max-width */
+
+  /* Dot matrix - balanced technical graph paper */
+  --hero-dot: rgb(20 27 45 / 0.13); /* refined, elegant technical dots */
+  --hero-dot-r: 1px; /* 2px crisp dots */
+  --hero-dot-gap: 24px; /* grid spacing */
+  --hero-dots-x: 50%;
+
+  /* Aurora */
+  --hero-orb: clamp(240px, 50vw, 420px);
+  --hero-blur: 80px;
+  --hero-focus-x: 50%;
+  --hero-focus-y: 65%;
+  --hero-aurora-fade: 75%;
+
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0 clamp(2.5rem, 5vw, 4rem);
+}
+
+/* ---- Layer 1 · Aurora glow ------------------------------------------------ */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle calc(var(--hero-orb) * 0.62)
+        at calc(var(--hero-focus-x) + var(--hero-orb) * 0.45)
+          calc(var(--hero-focus-y) - var(--hero-orb) * 0.55),
+      rgb(56 189 248 / 0.12),
+      rgb(56 189 248 / 0) 70%
+    ),
+    radial-gradient(
+      circle calc(var(--hero-orb) * 0.7)
+        at calc(var(--hero-focus-x) - var(--hero-orb) * 0.55)
+          calc(var(--hero-focus-y) + var(--hero-orb) * 0.4),
+      rgb(99 102 241 / 0.08),
+      rgb(99 102 241 / 0) 70%
+    ),
+    radial-gradient(
+      ellipse var(--hero-orb) calc(var(--hero-orb) * 1.15)
+        at var(--hero-focus-x) var(--hero-focus-y),
+      rgb(35 64 184 / 0.12),
+      rgb(35 64 184 / 0.04) 40%,
+      rgb(35 64 184 / 0) 72%
+    );
+
+  filter: blur(var(--hero-blur));
+
+  --hero-aurora-mask: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 10%,
+    #000 var(--hero-aurora-fade),
+    transparent 100%
+  );
+  -webkit-mask-image: var(--hero-aurora-mask);
+  mask-image: var(--hero-aurora-mask);
+}
+
+/* ---- Layer 2 · Dot matrix ------------------------------------------------- */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image: radial-gradient(
+    circle at center,
+    var(--hero-dot) var(--hero-dot-r),
+    transparent calc(var(--hero-dot-r) + 0.5px)
+  );
+  background-size: var(--hero-dot-gap) var(--hero-dot-gap);
+  background-position: 50% 0;
+
+  /* Smooth linear vertical fade — zero awkward elliptical cutoffs */
+  --hero-dots-mask: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 8%,
+    #000 65%,
+    transparent 100%
+  );
+  -webkit-mask-image: var(--hero-dots-mask);
+  mask-image: var(--hero-dots-mask);
+}
+
+/* ---- Responsive & Display Density ----------------------------------------- */
+@media (max-resolution: 1.49dppx) {
+  .hero {
+    --hero-dot-r: 1.25px;
+  }
+}
+
+@media (min-width: 640px) {
+  .hero {
+    --hero-dot-gap: 28px;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    --hero-orb: clamp(320px, 34vw, 520px);
+    --hero-blur: 100px;
+    --hero-focus-x: calc(50% + min(24%, var(--hero-wrap) / 4));
+    --hero-focus-y: 50%;
+    --hero-aurora-fade: 65%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero {
+    --hero-dot-gap: 32px;
+    --hero-blur: 120px;
+  }
+}
+
+@media (forced-colors: active), (prefers-contrast: more), print {
+  .hero::before,
+  .hero::after {
+    display: none;
+  }
 }
 .hero-grid {
   display: grid;
@@ -348,10 +476,11 @@ h3 {
   position: relative;
   margin: 0;
   width: min(430px, 82%);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
   background: #fff;
-  box-shadow: var(--shadow-sheet);
+  border: 1px solid var(--rule);
+  box-shadow: none;
 }
 .scanline {
   position: absolute;
@@ -385,7 +514,7 @@ h3 {
   border: 1px solid var(--rule);
   border-radius: var(--radius);
   background: var(--paper);
-  box-shadow: var(--shadow-sheet);
+  box-shadow: none;
   font-size: 0.86rem;
 }
 .parsed-title {
@@ -457,6 +586,9 @@ h3 {
 /* ---------- sections ---------- */
 .section {
   padding: clamp(3.5rem, 7vw, 6rem) 0;
+}
+#templates {
+  padding-top: clamp(2.5rem, 5vw, 4rem);
 }
 .section-tight {
   padding-top: 1rem;
