@@ -46,7 +46,11 @@ function head(o: HeadOptions, a: Assets): string {
 <meta name="robots" content="${o.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}">
 <meta name="theme-color" content="#eef1f5">
 <meta name="color-scheme" content="light">
+<link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="alternate" type="application/rss+xml" title="${SITE.name} guides" href="/blog/rss.xml">
@@ -227,7 +231,14 @@ export function renderHome(a: Assets, posts: Post[]): string {
     {
       '@context': 'https://schema.org',
       '@graph': [
-        { '@type': 'WebSite', '@id': abs('/#website'), url: abs('/'), name: SITE.name, inLanguage: 'en' },
+        {
+          '@type': 'WebSite',
+          '@id': abs('/#website'),
+          url: abs('/'),
+          name: SITE.name,
+          alternateName: ['Resume Creator', 'ATS Resume Creator', 'Free Resume Maker', 'Free CV Maker'],
+          inLanguage: 'en',
+        },
         {
           '@type': 'WebApplication',
           '@id': abs('/#app'),
@@ -265,8 +276,8 @@ export function renderHome(a: Assets, posts: Post[]): string {
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <h1 id="hero-title">Write a résumé that people and parsers both read.</h1>
-      <p class="lede">A free résumé builder with eight ATS-safe templates, a live preview that matches the PDF exactly, and a health check that catches what recruiters and applicant tracking systems trip over.</p>
+      <h1 id="hero-title">Free ATS Resume Creator & CV Maker</h1>
+      <p class="lede">Write an ATS-friendly résumé that recruiters and applicant tracking systems both read. Free resume maker with eight tested templates, live PDF preview, and a real-time health check — 100% private with no sign-up.</p>
       <div class="hero-actions">
         <a class="btn btn-primary btn-lg" href="/resumes" data-cta="hero">Build my résumé</a>
         <a class="btn btn-quiet btn-lg" href="/templates/">Browse templates</a>
@@ -381,9 +392,9 @@ export function renderHome(a: Assets, posts: Post[]): string {
 
   return page(
     {
-      title: 'Free ATS-Friendly Resume Builder & CV Maker – PDF & Word',
+      title: 'Free ATS Resume Creator & CV Maker – PDF & Word',
       description:
-        'Build an ATS-friendly resume or CV for free. 8 professional templates, live preview, real-text PDF, Word and mobile web export. No sign-up — your data stays in your browser.',
+        'Free ATS resume creator and CV maker with 8 tested templates, live PDF preview, and health check. 100% free resume builder with no sign-up or watermark.',
       path: '/',
       imageAlt: 'Resume Creator: an ATS-friendly résumé shown in the live editor',
       jsonLd,
