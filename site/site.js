@@ -49,6 +49,8 @@ function initTicker(root) {
   let hovered = false;
   let focused = false;
   let down = false;
+  let visible = false;
+  let frameId = 0;
   let dragged = false;
   let startX = 0;
   let lastX = 0;
@@ -71,21 +73,38 @@ function initTicker(root) {
   addEventListener('resize', measure, { passive: true });
   for (const img of group.querySelectorAll('img')) if (!img.complete) img.addEventListener('load', measure, { once: true });
 
+  const moving = () => visible && !document.hidden && !paused && !hovered && !focused && !down && !reduce.matches;
+  const schedule = () => {
+    if (moving() && !frameId) {
+      last = performance.now();
+      frameId = requestAnimationFrame(frame);
+    } else if (!moving() && frameId) {
+      cancelAnimationFrame(frameId);
+      frameId = 0;
+    }
+  };
   const frame = (t) => {
+    frameId = 0;
+    if (!moving()) return;
     const dt = Math.min(t - last, 100);
     last = t;
-    if (!paused && !hovered && !focused && !down && !reduce.matches) {
-      x -= (dt / 1000) * SPEED;
-      wrap();
-    }
-    requestAnimationFrame(frame);
+    x -= (dt / 1000) * SPEED;
+    wrap();
+    frameId = requestAnimationFrame(frame);
   };
-  requestAnimationFrame(frame);
+  // No animation work while off-screen, in a background tab, or paused.
+  new IntersectionObserver(([entry]) => {
+    visible = !!entry?.isIntersecting;
+    schedule();
+  }).observe(view);
+  document.addEventListener('visibilitychange', schedule);
+  reduce.addEventListener('change', schedule);
 
   // Drag or swipe. Capture only once it is a real drag so plain clicks still open the card.
   view.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
     down = true;
+    schedule();
     dragged = false;
     startX = lastX = e.clientX;
   });
@@ -109,6 +128,7 @@ function initTicker(root) {
   const end = () => {
     down = false;
     view.classList.remove('is-dragging');
+    schedule();
   };
   view.addEventListener('pointerup', end);
   view.addEventListener('pointercancel', end);
@@ -125,10 +145,17 @@ function initTicker(root) {
   );
 
   // Pause while a mouse is over it or anything inside has focus.
-  view.addEventListener('pointerenter', (e) => (hovered = e.pointerType === 'mouse'));
-  view.addEventListener('pointerleave', () => (hovered = false));
+  view.addEventListener('pointerenter', (e) => {
+    hovered = e.pointerType === 'mouse';
+    schedule();
+  });
+  view.addEventListener('pointerleave', () => {
+    hovered = false;
+    schedule();
+  });
   view.addEventListener('focusin', (e) => {
     focused = true;
+    schedule();
     clip.scrollLeft = 0;
     const card = e.target instanceof Element ? e.target.closest('li') : null;
     if (!card) return;
@@ -139,7 +166,10 @@ function initTicker(root) {
     else if (c.right > v.right - 24) x -= c.right - (v.right - 24);
     paint();
   });
-  view.addEventListener('focusout', (e) => (focused = view.contains(e.relatedTarget)));
+  view.addEventListener('focusout', (e) => {
+    focused = view.contains(e.relatedTarget);
+    schedule();
+  });
 
   view.addEventListener('keydown', (e) => {
     if (e.target !== view || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
@@ -153,6 +183,7 @@ function initTicker(root) {
     toggle.addEventListener('click', () => {
       paused = !paused;
       toggle.textContent = paused ? 'Play' : 'Pause';
+      schedule();
     });
   }
 }

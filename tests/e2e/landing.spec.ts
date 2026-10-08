@@ -9,7 +9,7 @@ test('landing page is crawlable static HTML with complete SEO metadata', async (
   expect(raw).toContain('Questions');
 
   await page.goto('/');
-  await expect(page).toHaveTitle(/ATS-Friendly Resume Builder/);
+  await expect(page).toHaveTitle(/Free ATS Resume Creator & CV Maker/);
   const meta = (sel: string) => page.locator(sel).getAttribute('content');
   expect((await meta('meta[name="description"]'))!.length).toBeGreaterThan(110);
   expect(await page.locator('link[rel="canonical"]').getAttribute('href')).toBe('https://atsresumecreator.vercel.app/');
@@ -17,12 +17,15 @@ test('landing page is crawlable static HTML with complete SEO metadata', async (
   expect(await meta('meta[name="twitter:card"]')).toBe('summary_large_image');
   await expect(page.locator('h1')).toHaveCount(1);
 
-  const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
-  const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
+  const nodes = (await page.locator('script[type="application/ld+json"]').allTextContents()).flatMap((text) => {
+    const data = JSON.parse(text);
+    return data['@graph'] ?? [data];
+  });
+  const types = nodes.map((n: { '@type': string }) => n['@type']);
   expect(types).toEqual(expect.arrayContaining(['WebSite', 'WebApplication', 'FAQPage']));
   // FAQ structured data must match the visible FAQ.
   const visible = await page.locator('#faq summary').allTextContents();
-  const faq = ld['@graph'].find((n: { '@type': string }) => n['@type'] === 'FAQPage').mainEntity.map((q: { name: string }) => q.name);
+  const faq = nodes.find((n: { '@type': string }) => n['@type'] === 'FAQPage').mainEntity.map((q: { name: string }) => q.name);
   expect(faq.map((q: string) => q.replace('resume', 'résumé'))).toEqual(visible);
 
   for (const img of await page.locator('img').all()) expect(await img.getAttribute('alt')).not.toBeNull();

@@ -2,10 +2,14 @@
 title: How to Write a CV in 2026: Step-by-Step Guide with Examples
 description: A practical guide to writing a CV that recruiters and ATS software both read: the right sections, order, length and wording, with examples for freshers and experienced candidates.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 3
 tags: [CV, How to]
 ---
+
+## Quick answer
+
+For an industry job, start with contact details and a short profile, then add relevant experience, projects, skills and education. Use specific achievements and tailor the CV to the role. Academic applications may require a longer CV with publications and research; check the employer’s instructions.
 
 Whether your country calls it a CV or a resume, the job is the same: show a recruiter in a few seconds that you fit the role. This guide covers the industry-style CV used in the UK, India, Europe and most of the world. (Applying for a research post? See [CV vs resume](/blog/cv-vs-resume/) for the academic version.)
 

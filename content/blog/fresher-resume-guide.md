@@ -2,10 +2,14 @@
 title: 'Resume for Freshers: Format, Sections and a Complete Example'
 description: How to write your first resume as a fresher or recent graduate — the right section order, what to put in projects and internships, and a complete one-page example you can adapt.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 3
 tags: [Freshers, Examples]
 ---
+
+## Quick answer
+
+A fresher résumé should show relevant education, projects, internships and skills, even without full-time work experience. Use concrete examples of what you built or contributed, keep the layout easy to read, and tailor the content to the job. Do not invent experience or metrics.
 
 A first resume is hard because the usual advice assumes years of work history. As a fresher, recruiters judge you on **potential and evidence**: what you built, what you learned and how clearly you present it. Here’s how to make one page do that.
 

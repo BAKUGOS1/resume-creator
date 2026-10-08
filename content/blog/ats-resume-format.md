@@ -2,10 +2,14 @@
 title: 'ATS Resume Format: Fonts, Margins, Sections and File Types'
 description: The exact formatting rules that keep your resume readable by applicant tracking systems — fonts, sizes, margins, headings, dates and file types, with reasons for each.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 2
 tags: [ATS, Formatting]
 ---
+
+## Quick answer
+
+Use a simple layout, standard headings, readable 10–12 pt body text and consistent dates. Keep contact details in the document body, and submit a text-based PDF or DOCX as requested by the employer. Avoid putting essential information in images, charts or floating text boxes.
 
 A resume can be well written and still fail if the software reading it can’t untangle the layout. This page is a reference for the formatting choices that matter, and why.
 
@@ -39,7 +43,7 @@ Keep it to one or two families: one for headings, one for body — or a single f
 - **Skill bars and charts.** “Python ●●●●○” has no machine-readable meaning, and recruiters don’t trust self-ratings.
 - **Photos** — unless they are expected in your country, and even then they add nothing for an ATS.
 
-An [eight-system parsing test](https://cvcraft.roynex.com/blog/can-ats-read-tables-columns-formatting-2026) found tables, text boxes and header/footer content were the most common causes of scrambled or missing data.
+Keeping important details in the main text flow reduces reliance on how a particular parser handles tables, text boxes, headers and footers. Review the imported fields when an application portal shows a preview.
 
 ## Colour
 

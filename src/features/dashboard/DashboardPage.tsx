@@ -124,10 +124,13 @@ export function DashboardPage() {
       <header className="sticky top-0 z-20 border-b border-line bg-bg/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
           <a href="/" aria-label="Resume Creator home" className="rounded-md">
-            <Logo className="text-[15px]" />
+            <Logo className="text-[15px] max-[360px]:[&>span]:hidden" />
           </a>
           <div className="ml-auto flex items-center gap-1.5">
-            <a href="/" className="inline-flex h-9 items-center gap-1 rounded-lg px-2.5 text-[13.5px] font-medium text-muted hover:bg-surface-2 hover:text-fg">
+            <a
+              href="/"
+              className="inline-flex h-9 items-center gap-1 rounded-lg px-2.5 text-[13.5px] font-medium text-muted hover:bg-surface-2 hover:text-fg max-sm:hidden"
+            >
               <ChevronLeftIcon size={15} /> Website
             </a>
             <ThemeMenu />

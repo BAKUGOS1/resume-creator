@@ -2,10 +2,14 @@
 title: CV vs Resume: What's the Difference? (US, UK, India and Europe)
 description: CV or resume? The answer depends on the country and the job. See how the US, UK, India, Europe and academia use each word, how long each should be, and which one to send.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 2
 tags: [CV, Resume basics]
 ---
+
+## Quick answer
+
+In the US and Canada, a résumé is usually a short job application document, while an academic CV records research, publications and teaching. In the UK and many other countries, CV commonly means the short job application document. Follow the role and employer’s requirements rather than the label alone.
 
 "Send us your CV." "Attach your resume." Recruiters use both words, sometimes for the same document and sometimes for very different ones. Which one you need depends on **where** you're applying and **what kind of job** it is.
 

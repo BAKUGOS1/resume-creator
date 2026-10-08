@@ -2,12 +2,16 @@
 title: How to Write an ATS-Friendly Resume in 2026 (Step-by-Step)
 description: A practical, step-by-step guide to writing a resume that applicant tracking systems parse correctly and recruiters actually read — with examples and a checklist.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 1
 tags: [ATS, Resume writing]
 ---
 
-Almost every large employer now runs applications through an **applicant tracking system (ATS)**. Jobscan’s 2026 report found a detectable ATS at [97.4% of Fortune 500 companies](https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/), with Workday the most common. That doesn’t mean a robot rejects you — most ATS software simply stores, parses and ranks applications so a recruiter can search them. But if the system can’t _read_ your resume, the recruiter searching for “React” or “financial reporting” may never find you.
+## Quick answer
+
+Use a clear reading order, standard section headings and selectable text. Include relevant skills from the job description only when they describe your experience, and follow the employer’s PDF or Word requirements. ATS-friendly formatting improves readability; it does not guarantee selection.
+
+Almost every large employer now runs applications through an **applicant tracking system (ATS)**. Jobscan publishes [research on ATS use among Fortune 500 companies](https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/); that sample does not describe every employer. That doesn’t mean a robot rejects you — most ATS software simply stores, parses and ranks applications so a recruiter can search them. But if the system can’t _read_ your resume, the recruiter searching for “React” or “financial reporting” may never find you.
 
 This guide walks through exactly how to write a resume that parses cleanly **and** works for the human who reads it next.
 
@@ -24,7 +28,7 @@ Two things follow from that:
 
 ## Step 1: Use a single-column layout
 
-Parsers read top to bottom, left to right. Two-column designs get merged line by line, so “Senior Engineer” can end up glued to “Python, SQL” from the sidebar. A [test across eight ATS platforms](https://cvcraft.roynex.com/blog/can-ats-read-tables-columns-formatting-2026) found single-column layouts were the only consistently safe choice.
+Parsers read top to bottom, left to right. Two-column designs get merged line by line, so “Senior Engineer” can end up glued to “Python, SQL” from the sidebar. A single-column layout reduces ambiguity in the reading order. Parser behaviour varies, so check the employer’s requirements rather than assuming one layout is universally supported.
 
 Keep one reading order. A thin date column beside each job (like our [Timeline template](/templates/timeline/)) is fine as long as each date sits on the same line as its job title.
 
@@ -98,11 +102,11 @@ A text-based PDF keeps your layout identical everywhere and parses well in moder
 
 - Single column, one reading order
 - Standard headings (Summary, Experience, Skills, Education)
-- Contact details in the body, no icons
+- Contact details in the body, with text labels rather than icons alone
 - Consistent job entry pattern and date format
 - Bullets that start with verbs and show results
 - Keywords from the job description, used truthfully
 - 10–12 pt body text, dark on white
 - Text-based PDF (or .docx when asked)
 
-Every template in Resume Creator follows these rules by default, and the built-in health check flags missing contact details, inverted dates, weak verbs and bullets without numbers before you export.
+Resume Creator uses selectable text and a single reading order. Contact icons are optional and accompany labels by default. Its built-in health check flags missing contact details, inverted dates, weak verbs and bullets without numbers before you export.

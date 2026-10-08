@@ -2,10 +2,14 @@
 title: 'How to Write a Resume Summary: A Simple Formula and 12 Examples'
 description: Write a resume summary recruiters actually read. A three-part formula plus 12 examples for software engineers, analysts, designers, sales, finance, career changers and freshers.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 4
 tags: [Resume writing, Examples]
 ---
+
+## Quick answer
+
+Write two or three sentences covering your role or target role, relevant strengths and one concrete result or specialty. Tailor the summary to the job and support claims with experience elsewhere in the résumé. Avoid generic adjectives and do not claim skills you cannot demonstrate.
 
 The summary sits at the top of your resume, exactly where recruiters look first. In [Ladders’ eye-tracking research](https://www.prnewswire.com/news-releases/ladders-updates-popular-recruiter-eye-tracking-study-with-new-key-insights-on-how-job-seekers-can-improve-their-resumes-300744217.html), the best-performing resumes opened with a clear overview of the candidate. Two or three sentences are enough.
 

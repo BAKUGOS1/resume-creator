@@ -26,7 +26,13 @@ export default defineConfig({
       input: { app: fileURLToPath(new URL('./app.html', import.meta.url)) },
       output: {
         // Keep the export libraries out of the main bundle (they load on first export).
-        manualChunks: { jspdf: ['jspdf'], jszip: ['jszip'] },
+        onlyExplicitManualChunks: true,
+        manualChunks: (id) => {
+          // Shared loader helpers must not pull a lazy export chunk into app startup.
+          if (id.includes('vite/preload-helper') || id.includes('commonjsHelpers')) return 'runtime';
+          if (id.includes('/node_modules/jspdf/')) return 'jspdf';
+          if (id.includes('/node_modules/jszip/')) return 'jszip';
+        },
       },
     },
   },

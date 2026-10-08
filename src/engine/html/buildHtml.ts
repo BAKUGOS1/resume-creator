@@ -18,6 +18,8 @@ import type { TemplateSpec } from '../templates/types';
 export interface HtmlOptions {
   /** Embed the template fonts as data URIs (self-contained file). Falls back to system fonts otherwise. */
   fonts?: FontSet | null;
+  /** Omit search metadata in sandboxed previews; exports retain it by default. */
+  structuredData?: boolean;
 }
 
 const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -378,7 +380,7 @@ export function buildResumeHtml(resume: Resume, opts: HtmlOptions = {}): string 
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta name="twitter:card" content="summary">
-<script type="application/ld+json">${jsonLd(resume)}</script>
+${opts.structuredData === false ? '' : `<script type="application/ld+json">${jsonLd(resume)}</script>`}
 <style>${css(spec, accentOf(resume), opts.fonts)}</style>
 </head>
 <body>

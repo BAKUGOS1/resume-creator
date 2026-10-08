@@ -2,10 +2,14 @@
 title: How to Quantify Achievements on a Resume (Even Without Obvious Numbers)
 description: Numbers make resume bullets credible. Learn five ways to find metrics in any role — scale, speed, money, quality and frequency — with before-and-after examples.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 5
 tags: [Resume writing, Bullets]
 ---
+
+## Quick answer
+
+Quantify an achievement using a number you can support: volume, time saved, cost, quality or frequency. State what you did and the result, with context such as the period measured. If you lack a reliable number, describe the outcome clearly instead of inventing a metric.
 
 “Improved customer satisfaction” is a claim. “Raised CSAT from 82% to 91% in two quarters” is evidence. Numbers make bullets believable, easier to scan and easier to talk about in an interview.
 

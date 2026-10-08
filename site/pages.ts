@@ -22,6 +22,8 @@ interface HeadOptions {
   type?: 'website' | 'article';
   image?: string;
   imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   jsonLd?: unknown[];
   noindex?: boolean;
   extra?: string;
@@ -61,8 +63,8 @@ function head(o: HeadOptions, a: Assets): string {
 <meta property="og:title" content="${e(o.title)}">
 <meta property="og:description" content="${e(o.description)}">
 <meta property="og:image" content="${image}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="${o.imageWidth ?? 1200}">
+<meta property="og:image:height" content="${o.imageHeight ?? 630}">
 <meta property="og:image:alt" content="${e(o.imageAlt ?? o.title)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${e(o.title)}">
@@ -70,6 +72,7 @@ function head(o: HeadOptions, a: Assets): string {
 <meta name="twitter:image" content="${image}">
 ${o.extra ?? ''}
 ${(o.jsonLd ?? []).map(ld).join('\n')}
+${ld({ '@context': 'https://schema.org', '@graph': [author, publisher, website] })}
 <link rel="stylesheet" href="${a.css}">
 <script type="module" src="${a.js}"></script>
 </head>`;
@@ -118,6 +121,7 @@ function footer(posts: Post[]): string {
         .join('')}
     </ul></nav>
     <nav aria-label="About"><h2>About</h2><ul>
+      <li><a href="/about/">About and testing limits</a></li>
       <li><a href="${SITE.author.url}" rel="author">Made by ${SITE.author.name}</a></li>
       <li><a href="${SITE.repo}">Source code</a></li>
       <li><a href="/blog/rss.xml">RSS feed</a></li>
@@ -165,7 +169,24 @@ export const ctaBlock = `<aside class="cta-box" aria-label="Try the builder">
   <a class="btn btn-primary" href="/resumes">Open the builder</a>
 </aside>`;
 
-const author = { '@type': 'Person', name: SITE.author.name, url: SITE.author.url, sameAs: [SITE.author.github] };
+const author = { '@type': 'Person', name: SITE.author.name, '@id': abs('/#author'), url: SITE.author.url, sameAs: [SITE.author.github] };
+const publisher = {
+  '@type': 'Organization',
+  '@id': abs('/#publisher'),
+  name: SITE.name,
+  url: abs('/'),
+  founder: { '@id': abs('/#author') },
+  sameAs: [SITE.repo],
+  logo: { '@type': 'ImageObject', url: abs('/icon-512.png') },
+};
+const website = {
+  '@type': 'WebSite',
+  '@id': abs('/#website'),
+  name: SITE.name,
+  url: abs('/'),
+  inLanguage: SITE.locale,
+  publisher: { '@id': abs('/#publisher') },
+};
 
 function templateCard(t: (typeof TEMPLATE_LIST)[number], headingLevel: 'h2' | 'h3' = 'h3'): string {
   return `<li class="tpl">
@@ -206,7 +227,7 @@ export const FAQ = [
   ['Is Resume Creator really free?', 'Yes. Every template and export format is free, with no sign-up, watermark or paywall.'],
   [
     'Are the templates ATS-friendly?',
-    'Yes. Every template uses a single reading order, real selectable text, standard section headings and no tables, text boxes or icons, the elements ATS parsers most often misread.',
+    'The templates use real selectable text, standard section headings and a single reading order. Contact icons are optional and accompany text by default. These choices support parsing, but results vary by employer and ATS. No template guarantees an interview or an ATS score.',
   ],
   [
     'Where is my résumé data stored?',
@@ -236,7 +257,8 @@ export function renderHome(a: Assets, posts: Post[]): string {
           '@id': abs('/#website'),
           url: abs('/'),
           name: SITE.name,
-          alternateName: ['Resume Creator', 'ATS Resume Creator', 'Free Resume Maker', 'Free CV Maker'],
+          alternateName: ['ATS Resume Creator'],
+          publisher: { '@id': abs('/#publisher') },
           inLanguage: 'en',
         },
         {
@@ -259,6 +281,7 @@ export function renderHome(a: Assets, posts: Post[]): string {
           ],
           screenshot: abs(OG_DEFAULT),
           author,
+          publisher: { '@id': abs('/#publisher') },
         },
         {
           '@type': 'FAQPage',
@@ -277,7 +300,7 @@ export function renderHome(a: Assets, posts: Post[]): string {
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <h1 id="hero-title">Free ATS Resume Creator & CV Maker</h1>
-      <p class="lede">Write an ATS-friendly résumé that recruiters and applicant tracking systems both read. Free resume maker with eight tested templates, live PDF preview, and a real-time health check — 100% private with no sign-up.</p>
+      <p class="lede">Write an ATS-friendly résumé with eight templates, selectable text, live PDF preview and a real-time health check. Your résumé stays in your browser, with no sign-up required.</p>
       <div class="hero-actions">
         <a class="btn btn-primary btn-lg" href="/resumes" data-cta="hero">Build my résumé</a>
         <a class="btn btn-quiet btn-lg" href="/templates/">Browse templates</a>
@@ -296,7 +319,7 @@ export function renderHome(a: Assets, posts: Post[]): string {
 <section class="section" id="templates" aria-labelledby="tpl-title">
   <div class="wrap">
     <div class="section-head center">
-      <p class="kicker">8 ATS-tested layouts</p>
+      <p class="kicker">8 layouts with selectable text</p>
       <h2 id="tpl-title">Smart templates for every career stage</h2>
       <p>Classic or colourful, every design keeps a single reading order, real text and standard headings. Switch any time without retyping.</p>
     </div>
@@ -394,7 +417,7 @@ export function renderHome(a: Assets, posts: Post[]): string {
     {
       title: 'Free ATS Resume Creator & CV Maker – PDF & Word',
       description:
-        'Free ATS resume creator and CV maker with 8 tested templates, live PDF preview, and health check. 100% free resume builder with no sign-up or watermark.',
+        'Free ATS resume creator and CV maker with 8 templates, live PDF preview, and health check. Free resume builder with no sign-up or watermark.',
       path: '/',
       imageAlt: 'Resume Creator: an ATS-friendly résumé shown in the live editor',
       jsonLd,
@@ -425,7 +448,7 @@ export function renderTemplatesIndex(a: Assets, posts: Post[]): string {
   const body = `<div class="wrap page-head">
   ${crumbs.html}
   <h1>Free ATS-friendly résumé templates</h1>
-  <p class="lede">Eight designs from conservative to colourful. Each one is single-column with real, selectable text and standard headings, so it reads correctly in Workday, Greenhouse, Lever, iCIMS and Taleo.</p>
+  <p class="lede">Eight designs from conservative to colourful, with real selectable text, standard headings and a single reading order. Follow the employer’s file requirements: parsing varies by system, and these templates are not certified by any ATS vendor.</p>
 </div>
 <section class="section section-tight" aria-label="All templates">
   <div class="wrap"><ul class="tpl-grid tpl-grid-lg">${TEMPLATE_LIST.map((t) => templateCard(t, 'h2')).join('')}</ul></div>
@@ -497,6 +520,8 @@ export function renderTemplatePage(id: TemplateId, a: Assets, posts: Post[]): st
       path: `/templates/${id}/`,
       image: `/templates/${id}.webp`,
       imageAlt: `${t.name} résumé template`,
+      imageWidth: 600,
+      imageHeight: 849,
       jsonLd: [crumbs.data],
       extra: `<meta property="og:image:type" content="image/webp">`,
     },
@@ -566,7 +591,7 @@ export function renderPost(p: Post, a: Assets, posts: Post[], hasOgImage: boolea
     datePublished: `${p.date}T09:00:00+05:30`,
     dateModified: `${p.updated}T09:00:00+05:30`,
     author,
-    publisher: { '@type': 'Organization', name: SITE.name, url: abs('/'), logo: { '@type': 'ImageObject', url: abs('/icon-512.png') } },
+    publisher: { '@id': abs('/#publisher') },
     wordCount: p.words,
     keywords: p.tags.join(', '),
     inLanguage: 'en',
@@ -614,6 +639,45 @@ export function renderPost(p: Post, a: Assets, posts: Post[], hasOgImage: boolea
 
 /* ------------------------------------------------------------------- 404 */
 
+export function renderAbout(a: Assets, posts: Post[]): string {
+  return page(
+    {
+      title: 'About Resume Creator: Privacy and Testing Limits',
+      description:
+        'Who builds Resume Creator, how local browser storage works, what the automated checks cover, and why ATS parsing and hiring outcomes cannot be guaranteed.',
+      path: '/about/',
+      jsonLd: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'AboutPage',
+          '@id': abs('/about/#page'),
+          url: abs('/about/'),
+          name: 'About Resume Creator',
+          about: { '@id': abs('/#app') },
+          isPartOf: { '@id': abs('/#website') },
+        },
+      ],
+    },
+    a,
+    posts,
+    `<div class="wrap narrow page-head"><h1>About Resume Creator</h1></div>
+<article class="wrap narrow prose section section-tight">
+<h2>What is Resume Creator?</h2>
+<p>Resume Creator is a free, browser-based résumé and CV builder made by <a href="${SITE.author.url}" rel="author">${SITE.author.name}</a>. It offers eight templates, PDF, Word, text, HTML and JSON exports, and a résumé health check. The <a href="${SITE.repo}">source code and tests are public on GitHub</a>.</p>
+<h2>Where does my data go?</h2>
+<p>Résumé content is saved in this browser’s local storage. There are no accounts or résumé-upload services. Clearing browser data can delete your saved résumés; download a JSON backup from the dashboard to keep a separate copy or move between devices.</p>
+<h2>What do the tests cover?</h2>
+<p>The repository includes automated checks for text layout, template stability, file exports, editing, local persistence, keyboard interactions and selected accessibility rules. These checks help catch software regressions. They do not test every employer’s applicant tracking system or certify ATS compatibility.</p>
+<h2>What does the health check mean?</h2>
+<p>It flags issues such as missing contact information, inverted dates, weak verbs and unsupported PDF characters. It is a writing and formatting aid, not an employer’s ATS score, a ranking prediction or a guarantee of interviews.</p>
+<h2>How should I use the guides?</h2>
+<p>The <a href="/blog/">writing guides</a> provide practical examples and link to sources where used. Examples are illustrative, not accounts of real hiring outcomes. Follow the employer’s instructions and your country’s conventions. Published and updated dates describe the articles; rebuilding the app does not refresh those dates.</p>
+<h2>Report a problem</h2>
+<p>Report software issues or suggested content corrections through the <a href="${SITE.repo}/issues">GitHub issue tracker</a>. Do not include private résumé content or contact details in a public issue.</p>
+</article>`,
+  );
+}
+
 export function render404(a: Assets, posts: Post[]): string {
   return page(
     { title: `Page not found | ${SITE.name}`, description: 'This page does not exist.', path: '/404', noindex: true },
@@ -633,6 +697,7 @@ export function renderSitemap(posts: Post[], lastmod: string): string {
   const latest = posts.reduce((m, p) => (p.updated > m ? p.updated : m), lastmod);
   const urls: { loc: string; lastmod: string; priority: string }[] = [
     { loc: '/', lastmod: latest, priority: '1.0' },
+    { loc: '/about/', lastmod, priority: '0.5' },
     { loc: '/templates/', lastmod, priority: '0.9' },
     ...TEMPLATE_LIST.map((t) => ({ loc: `/templates/${t.id}/`, lastmod, priority: '0.8' })),
     { loc: '/blog/', lastmod: latest, priority: '0.8' },

@@ -3,6 +3,8 @@ export const SITE = {
   url: 'https://atsresumecreator.vercel.app',
   name: 'Resume Creator',
   locale: 'en',
+  /** Last substantive change to the public page templates; do not use the build date. */
+  updated: '2026-10-08',
   author: { name: 'Mohit Kumar', url: 'https://mohitstack.vercel.app/', github: 'https://github.com/BAKUGOS1' },
   repo: 'https://github.com/BAKUGOS1/resume-creator',
 } as const;

@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { IconButton } from '../../components/ui/Button';
 import {
   CircleAlertIcon,
@@ -42,14 +42,24 @@ function Toggle<T extends string>({
   options: { id: T; label: string; icon: typeof GlobeIcon; text?: string }[];
   label: string;
 }) {
+  const onKey = (event: KeyboardEvent<HTMLDivElement>) => {
+    const index = options.findIndex((option) => option.id === value);
+    const delta = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0;
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? options.length - 1 : delta ? (index + delta + options.length) % options.length : -1;
+    if (nextIndex < 0) return;
+    event.preventDefault();
+    onChange(options[nextIndex]!.id);
+    event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]')[nextIndex]?.focus();
+  };
   return (
-    <div role="radiogroup" aria-label={label} className="flex gap-0.5 rounded-lg bg-surface-2 p-0.5">
+    <div role="radiogroup" aria-label={label} onKeyDown={onKey} className="flex gap-0.5 rounded-lg bg-surface-2 p-0.5">
       {options.map((o) => (
         <button
           key={o.id}
           type="button"
           role="radio"
           aria-checked={value === o.id}
+          tabIndex={value === o.id ? 0 : -1}
           aria-label={o.label}
           title={o.label}
           onClick={() => onChange(o.id)}
@@ -90,7 +100,7 @@ export function PreviewPane({ resume, layout, fonts, loading, error }: PreviewPa
     return () => ro.disconnect();
   }, [mode]);
 
-  const html = useMemo(() => (mode === 'web' ? buildResumeHtml(deferred, { fonts }) : ''), [mode, deferred, fonts]);
+  const html = useMemo(() => (mode === 'web' ? buildResumeHtml(deferred, { fonts, structuredData: false }) : ''), [mode, deferred, fonts]);
 
   const page = layout?.pages[0];
   const natural = (page?.width ?? 595) * PT_TO_PX;

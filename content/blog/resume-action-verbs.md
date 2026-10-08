@@ -2,10 +2,14 @@
 title: 200+ Resume Action Verbs, Grouped by What You Actually Did
 description: Replace "responsible for" with strong resume action verbs. 200+ verbs grouped by leadership, building, improving, analysis, communication and more — with before-and-after examples.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 6
 tags: [Resume writing, Bullets]
 ---
+
+## Quick answer
+
+Start each résumé bullet with a specific verb that describes your contribution, such as built, analysed, improved or led. Follow it with the work and an outcome. Choose wording that matches what you actually did; a stronger-sounding verb cannot replace evidence.
 
 “Responsible for”, “worked on” and “helped with” describe a job description, not what you achieved. Starting each bullet with a precise verb forces you to say what _you_ did — and recruiters scanning in seconds see the action first.
 

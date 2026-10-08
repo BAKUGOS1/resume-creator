@@ -296,6 +296,39 @@ test('web view reflows the résumé and exports a responsive HTML page', async (
   expect(html).toContain('"@type":"Person"');
 });
 
+test('preview controls support arrow keys with one tab stop per group', async ({ page }) => {
+  await openDashboard(page);
+  await page.getByRole('link', { name: 'Sample — Software Engineer' }).click();
+  const mode = page.getByRole('radiogroup', { name: 'Preview mode' });
+  await mode.getByRole('radio', { name: 'Page view (PDF layout)' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(mode.getByRole('radio', { name: 'Web view (responsive)' })).toBeFocused();
+  await expect(mode.getByRole('radio', { name: 'Web view (responsive)' })).toHaveAttribute('aria-checked', 'true');
+  await expect(mode.locator('[tabindex="0"]')).toHaveCount(1);
+  const devices = page.getByRole('radiogroup', { name: 'Device width' });
+  await devices.getByRole('radio', { name: 'Phone (390 px)' }).focus();
+  await page.keyboard.press('End');
+  await expect(devices.getByRole('radio', { name: 'Desktop (full width)' })).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect(devices.getByRole('radio', { name: 'Phone (390 px)' })).toHaveAttribute('aria-checked', 'true');
+  await expect(devices.locator('[tabindex="0"]')).toHaveCount(1);
+});
+
+test('PDF library loads only after requesting an export', async ({ page }) => {
+  const scripts: string[] = [];
+  page.on('request', (request) => {
+    if (request.resourceType() === 'script') scripts.push(request.url());
+  });
+  await openDashboard(page);
+  await page.getByRole('link', { name: 'Sample — Software Engineer' }).click();
+  await expect.poll(() => previewText(page)).toContain('Jordan Ellis');
+  expect(scripts.some((url) => /\/jspdf-[^/]+\.js/.test(url))).toBe(false);
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download PDF', exact: true }).click();
+  await download;
+  expect(scripts.some((url) => /\/jspdf-[^/]+\.js/.test(url))).toBe(true);
+});
+
 test('new design directions render and switch from the Design tab', async ({ page }) => {
   await openDashboard(page);
   await page.getByRole('link', { name: 'Sample — Software Engineer' }).click();

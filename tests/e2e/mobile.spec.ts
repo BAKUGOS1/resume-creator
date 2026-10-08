@@ -4,6 +4,12 @@ test('mobile: create, edit and read the reflowed web résumé without horizontal
   await openDashboard(page);
   const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(await overflow()).toBeLessThanOrEqual(0);
+  await page.setViewportSize({ width: 320, height: 851 });
+  expect(await overflow(), '320 px dashboard').toBeLessThanOrEqual(0);
+  const newResume = page.getByRole('button', { name: 'New résumé', exact: true }).first();
+  const bounds = (await newResume.boundingBox())!;
+  expect(bounds.x + bounds.width).toBeLessThanOrEqual(320);
+  await page.setViewportSize({ width: 393, height: 851 });
 
   await createBlank(page);
   await page.getByLabel('Full name').fill('Grace Hopper');
@@ -27,7 +33,7 @@ test('mobile: create, edit and read the reflowed web résumé without horizontal
 
 test('mobile: landing page is readable and leads into the builder', async ({ page, errors: _errors }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('people and parsers');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Free ATS Resume Creator & CV Maker');
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
   await page
     .getByRole('link', { name: /Build my résumé/ })

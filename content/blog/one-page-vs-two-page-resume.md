@@ -2,10 +2,14 @@
 title: 'One-Page vs Two-Page Resume: How Long Should Your Resume Be?'
 description: Should your resume be one page or two? Clear guidance by experience level, what to cut when you're over, and how to make a two-page resume work.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 8
 tags: [Formatting, Resume writing]
 ---
+
+## Quick answer
+
+Use one page when it covers your relevant qualifications clearly. Use two pages when substantial relevant experience needs the space. Relevance and readable text matter more than a fixed page count; do not shrink the font excessively or keep unrelated roles just to fill space.
 
 Resume length isn’t a rule, it’s a trade-off: enough detail to prove you can do the job, short enough to read in the few seconds a first screen takes. [Ladders’ eye-tracking study](https://www.prnewswire.com/news-releases/ladders-updates-popular-recruiter-eye-tracking-study-with-new-key-insights-on-how-job-seekers-can-improve-their-resumes-300744217.html) measured an initial scan of about 7.4 seconds and recommended a two-page maximum for experienced professionals.
 

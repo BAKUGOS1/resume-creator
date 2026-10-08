@@ -61,6 +61,8 @@ Draw ops (`src/engine/types.ts`): text, rect, line, circle, link, icon. Renderer
 - Elements with `sr-only` need a positioned ancestor inside scroll containers (bug fixed in `EditorPage.tsx`).
 - Some editor inputs use `list=` (datalist) → their ARIA role is `combobox`, not `textbox` (matters in tests).
 - Site URL lives in `site/config.ts` and `public/robots.txt`.
+- Vite export chunks use explicit manual chunks and a separate runtime helper; verify jsPDF is not fetched until PDF export.
+- Web previews omit JSON-LD and keep the opaque iframe sandbox. Axe scans preview controls and the exact iframe document separately; HTML exports retain JSON-LD.
 
 ## Current features (as of 2026-10-03)
 
@@ -76,6 +78,7 @@ Draw ops (`src/engine/types.ts`): text, rect, line, circle, link, icon. Renderer
 
 - Done in code: unique titles/descriptions, canonical, OG/Twitter, JSON-LD (WebSite, WebApplication, FAQPage, BlogPosting, BreadcrumbList, ItemList), sitemap.xml (generated), RSS `/blog/rss.xml`, robots.txt, 404, trailing-slash 308 redirects.
 - 11 guides (resume + CV + India biodata), 8 template pages.
+- `/about/` explains authorship, privacy and testing limits. Every guide opens with a Quick answer; author/publisher JSON-LD uses stable IDs. `SITE.updated` is the public-template modification date; update it only after a substantive change, not each build.
 - **Owner to do:** deploy → Google Search Console (verify, submit sitemap, request indexing) → Bing Webmaster (import) → backlinks (portfolio, GitHub README, LinkedIn, Reddit). Publish 1–2 guides/week based on Search Console queries.
 
 ## Ideas / backlog
@@ -85,6 +88,8 @@ Draw ops (`src/engine/types.ts`): text, rect, line, circle, link, icon. Renderer
 
 ## Change log
 
+- 2026-10-08: SEO/AEO/GEO review: added direct answers to 11 guides and a transparent About page, unified author/publisher identities, corrected template OG dimensions and build-date sitemap inflation, and removed unsupported ATS testing claims. 83 unit tests and all 30 browser checks verified (including a targeted rerun); live verification blocked by network proxy.
+- 2026-10-08: audited desktop/mobile builder; fixed dashboard header overflow down to 320px, added preview radio keyboard navigation, stopped off-screen/paused ticker work, deferred export-library loading (initial JS ~48% lower), and corrected stale landing/E2E accessibility checks. Typecheck, lint, build, 79 unit tests and 29 browser tests passed.
 - 2026-10-03: v2 builder (Vite/React/TS rewrite), 4 new templates, responsive web résumé, SEO landing.
 - 2026-10-03: static site generator + 8 guides + template pages + ink-blue redesign; ticker ported into home (branch `feat/v2.2-blog-seo`).
 - 2026-10-03: smart contact links with labels/icons (branch `feat/v2.3-smart-links`).

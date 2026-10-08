@@ -2,10 +2,14 @@
 title: PDF or Word Resume? When to Send Each
 description: Should you send your resume as a PDF or a Word document? A clear answer for job portals, email applications and recruiters — plus how to make sure your PDF is ATS-readable.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 7
 tags: [ATS, Formatting]
 ---
+
+## Quick answer
+
+Follow the employer’s requested file type first. If no format is specified, a text-based PDF preserves your layout; DOCX is useful when Word is requested or editable content is needed. Avoid image-only PDFs, and check that the exported text can be selected and read in order.
 
 Short answer: **send a text-based PDF unless the employer asks for Word.** Here’s the reasoning, and the cases where .docx is the better choice.
 

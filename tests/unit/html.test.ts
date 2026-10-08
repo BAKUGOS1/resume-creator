@@ -41,6 +41,14 @@ describe('responsive web résumé', () => {
     }
   });
 
+  it('keeps sandboxed previews script-free while exports include structured data', () => {
+    const resume = createSampleResume();
+    const preview = buildResumeHtml(resume, { structuredData: false });
+    expect(preview).not.toContain('<script');
+    expect(preview).toContain('<h1>Jordan Ellis</h1>');
+    expect(buildResumeHtml(resume)).toContain('<script type="application/ld+json">');
+  });
+
   it('keeps accent-coloured text at WCAG AA contrast even for light custom colours', () => {
     for (const c of ['#ffd400', '#7dd3fc', '#d9622b', '#5b4bdb']) expect(contrast(readable(c), '#ffffff')).toBeGreaterThanOrEqual(4.5);
   });

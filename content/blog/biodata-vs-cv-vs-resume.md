@@ -2,10 +2,14 @@
 title: Biodata vs CV vs Resume: Which One Do You Need in India?
 description: Biodata, CV and resume mean different things in India. Learn what each contains, when government, private-sector and international employers expect each one, and which format to use.
 date: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-08
 order: 4
 tags: [CV, India]
 ---
+
+## Quick answer
+
+For most jobs, send a résumé or industry-style CV focused on relevant skills and experience. Use biodata only when the organisation explicitly requests it; it can include personal details that are unnecessary for a normal job application. Share sensitive information only when required and appropriate.
 
 In India you'll hear three words: **biodata**, **CV** and **resume**. Using the wrong one won't usually cost you a job, but sending the right format does make a better first impression.
 

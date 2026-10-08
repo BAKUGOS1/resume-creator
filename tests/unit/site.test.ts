@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderSite } from '../../site/generate';
 import { renderMarkdown } from '../../site/markdown';
 import { SITE } from '../../site/config';
@@ -41,6 +41,7 @@ describe('static site SEO', () => {
   it('generates home, templates, guides, 404, sitemap and RSS', () => {
     for (const f of [
       'index.html',
+      'about/index.html',
       'templates/index.html',
       'templates/timeline/index.html',
       'blog/index.html',
@@ -95,5 +96,61 @@ describe('static site SEO', () => {
     const sitemap = files.get('sitemap.xml')!;
     for (const [file] of pages()) expect(sitemap, file).toContain(`<loc>${SITE.url}${urlOf(file)}</loc>`);
     expect(files.get('blog/rss.xml')).toContain('<rss version="2.0"');
+  });
+
+  it('uses the same author and publisher identities on guides and the about page', () => {
+    for (const [file, html] of pages()) {
+      const nodes = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+        .map((match) => JSON.parse(match[1]!))
+        .flatMap((data) => data['@graph'] ?? [data]);
+      expect(
+        nodes.find((node) => node['@id'] === `${SITE.url}/#author`),
+        file,
+      ).toMatchObject({
+        '@type': 'Person',
+        name: SITE.author.name,
+        url: SITE.author.url,
+      });
+      expect(
+        nodes.find((node) => node['@id'] === `${SITE.url}/#publisher`),
+        file,
+      ).toMatchObject({ name: SITE.name, sameAs: [SITE.repo] });
+      const article = nodes.find((node) => node['@type'] === 'BlogPosting');
+      if (article) {
+        expect(article.author['@id'], file).toBe(`${SITE.url}/#author`);
+        expect(article.publisher['@id'], file).toBe(`${SITE.url}/#publisher`);
+      }
+    }
+    expect(files.get('about/index.html')).toContain('not an employer’s ATS score');
+  });
+
+  it('puts a direct answer before the main guide content without guaranteeing outcomes', () => {
+    for (const [file, html] of pages().filter(([file]) => /^blog\/.+\/index\.html$/.test(file))) {
+      expect(html, file).toMatch(/<h2 id="quick-answer">Quick answer<\/h2>\s*<p>[^<]{80,}<\/p>/);
+      expect(html.indexOf('id="quick-answer"'), file).toBeLessThan(html.indexOf('<h2', html.indexOf('id="quick-answer"') + 1));
+    }
+    expect(files.get('index.html')).not.toContain('ATS-tested');
+    expect(files.get('templates/index.html')).toContain('not certified by any ATS vendor');
+  });
+
+  it('declares the actual portrait image dimensions on template pages', () => {
+    for (const [file, html] of pages().filter(([file]) => /^templates\/.+\/index\.html$/.test(file))) {
+      expect(attr(html, /property="og:image:width" content="([^"]+)"/), file).toBe('600');
+      expect(attr(html, /property="og:image:height" content="([^"]+)"/), file).toBe('849');
+    }
+  });
+
+  it('does not refresh sitemap modification dates just because the build date changes', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2030-01-01'));
+      const first = renderSite({ root: ROOT, assets: { css: '/assets/site.css', js: '/assets/site.js' } }).files.get('sitemap.xml');
+      vi.setSystemTime(new Date('2031-01-01'));
+      const second = renderSite({ root: ROOT, assets: { css: '/assets/site.css', js: '/assets/site.js' } }).files.get('sitemap.xml');
+      expect(first).toBe(second);
+      expect(first).not.toContain('2030-01-01');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
